@@ -1,0 +1,308 @@
+/* Title and description styles */
+.archive-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.archive-description {
+    color: var(--text-color-light);
+    margin-bottom: 1rem;
+}
+
+/* File tree container styles */
+.archive-container {
+    background-color: var(--secondary-bg);
+    border-radius: 0.5rem;
+    overflow: hidden; /* Изменено с overflow-y: auto */
+    height: 100vh;
+    /* Вернул полную высоту, так как контролы удалены */
+}
+
+/* Archive View Controls - УДАЛЕНЫ */
+
+/* File Explorer Styles */
+.file-explorer-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Search Bar Styles */
+.explorer-search-bar {
+    padding: 8px 12px;
+    background-color: var(--secondary-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.explorer-search-input {
+    width: 100%;
+    padding: 8px 32px 8px 35px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.explorer-search-input:focus {
+    border-color: var(--accent-color);
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    color: var(--text-color-light);
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.search-clear-btn {
+    position: absolute;
+    right: 8px;
+    background: none;
+    border: none;
+    color: var(--text-color-light);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.search-clear-btn:hover {
+    color: var(--error-color);
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.explorer-navigation-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 12px;
+    background-color: var(--secondary-bg);
+    border-bottom: 1px solid var(--border-color);
+    /* position: sticky; top: 0; z-index: 10; - Больше не нужно из-за flex структуры */
+}
+
+.explorer-navigation-bar .btn {
+    padding: 4px 10px;
+    font-size: 0.7rem;
+}
+
+.explorer-path-display {
+    flex: 1;
+    padding: 0.6rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    font-size: 0.8rem;
+    line-height: 0.9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Explorer List Styles */
+.explorer-list {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 0; /* Уменьшил отступы */
+    flex: 1;
+    overflow-y: auto;
+}
+
+.explorer-list-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    user-select: none;
+}
+
+.explorer-list-item:hover {
+    background-color: var(--accent-color-light);
+}
+
+.explorer-list-item.selected {
+    background-color: var(--info-bg-light);
+}
+
+.explorer-item-icon {
+    font-size: 1rem;
+    width: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.explorer-item-icon.folder {
+    color: #f1c40f;
+}
+
+.explorer-item-icon.file-pdf {
+    color: #e74c3c;
+}
+
+.explorer-item-icon.file-excel {
+    color: #27ae60;
+}
+
+.explorer-item-icon.file-generic {
+    color: var(--text-color-light);
+}
+
+.explorer-item-icon.file {
+    color: #e74c3c;
+}
+
+.explorer-item-name {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.empty-folder-message {
+    padding: 15px;
+    text-align: center;
+    color: var(--text-color-light);
+    font-style: italic;
+    font-size: 0.85rem;
+}
+
+/* Remove old grid styles */
+.explorer-grid {
+    display: none;
+}
+
+/* File tree item base styles */
+.file-tree-item-container {
+    margin-left: 0;
+    cursor: pointer;
+    position: relative;
+}
+
+.file-tree-item-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Hover effect for folders */
+.file-tree-item-content:hover {
+    background-color: var(--accent-color-light);
+}
+
+/* Specific styles for folders */
+.file-tree-item-content:not(.is-file) {
+    cursor: pointer;
+}
+
+/* Text color for file names */
+.file-tree-item-name {
+    color: var(--text-color);
+}
+
+/* Loading text style */
+.file-tree-loading-text {
+    font-style: italic;
+    color: #6b7280;
+    margin-left: 8px;
+}
+
+/* Container for child items */
+.file-tree-item-children {
+    padding-left: 16px;
+}
+
+/* Loading and error messages for the whole app */
+.archive-loading {
+    padding: 16px;
+    text-align: center;
+    color: var(--text-color-light);
+}
+
+.archive-error {
+    padding: 16px;
+    text-align: center;
+    color: var(--error-color);
+}
+
+.file-tree-item-content.selected-file {
+    background-color: var(--info-bg-light);
+}
+
+/* Styles for the rename feature */
+.rename-input-container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+}
+
+.rename-input {
+    flex-grow: 1;
+    border: 2px solid var(--accent-color);
+    border-radius: 4px;
+    font-size: inherit;
+    outline: none;
+}
+
+.rename-buttons {
+    display: flex;
+    gap: 4px;
+    margin-right: 4px;
+}
+
+.rename-button {
+    padding: 0 6px 0 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+.rename-button:hover {
+    background-color: var(--secondary-bg);
+}
+
+.rename-button.rename-cancel {
+    color: var(--error-color);
+}
+
+/* Styles for the context menu */
+.context-menu {
+    position: fixed;
+    background-color: var(--secondary-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-card);
+    border-radius: 4px;
+    z-index: 1000;
+}
+
+.context-menu-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.context-menu-item:hover {
+    background-color: var(--accent-color-light);
+}

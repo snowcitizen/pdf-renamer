@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Архив документов</title>
+
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' 'unsafe-eval';
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        font-src 'self' https://fonts.gstatic.com;
+        connect-src 'self' http://localhost:3000 ws://localhost:3000;
+        object-src 'none';
+        media-src 'none';
+        img-src 'self' data:;
+        frame-src 'self' pdf-viewer:;
+    ">
+</head>
+
+<body>
+    <div id="root"></div>
+    <script type="module" src="/src/App.jsx"></script>
+</body>
+
+</html>

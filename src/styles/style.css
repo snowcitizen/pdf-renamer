@@ -1,0 +1,858 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-bg: #f3f4f6;
+    --secondary-bg: #ffffff;
+    --accent-color: #38b2ac;
+    --accent-color-light: #69D9D4;
+    --text-color: #1f2937;
+    --text-color-light: #6b7280;
+    --border-color: #e5e7eb;
+    --shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+    --error-color: #dc3545;
+    --error-bg-light: #fcc1c1;
+    --info-color: #17a2b8;
+    --info-bg-light: #d1ecf1;
+    --success-color: var(--accent-color);
+    --success-bg-light: #e6fffa;
+    --transition-speed: 0.2s ease-in-out;
+
+    --button-type1-bg: #38b2ac;
+    --button-type1-text: #ffffff;
+    --button-type1-hover-bg: #309e99;
+
+    --button-type2-bg: transparent;
+    --button-type2-text: var(--text-color);
+    --button-type2-border: var(--border-color);
+    --button-type2-hover-bg: #e9ecef;
+
+    --pending-color: #38b2ac;
+    --preview-bg: #fbfffe;
+    --unmatched-bg: #f8d7da;
+    --unmatched-text: #dc3545;
+
+    --reconciled-success-bg-color: #38b2ac;
+}
+
+.dark {
+    --primary-bg: #1a1a1a;
+    --secondary-bg: #242526;
+    --accent-color: #127470;
+    --accent-color-light: #127470;
+    --text-color: #e5e5e5;
+    --text-color-light: #b0b3b8;
+    --border-color: #3a3b3c;
+    --shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+    --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+    --error-color: #f56565;
+    --error-bg-light: #532525;
+    --info-color: #38bdf8;
+    --info-bg-light: #164e63;
+    --success-color: #34d399;
+    --success-bg-light: #064e3b;
+    --transition-speed: 0.2s ease-in-out;
+
+    --button-type1-bg: #10a37f;
+    --button-type1-text: #ffffff;
+    --button-type1-hover-bg: #0c8269;
+
+    --button-type2-bg: transparent;
+    --button-type2-text: #e5e5e5;
+    --button-type2-border: #3a3b3c;
+    --button-type2-hover-bg: #3a3b3c;
+
+    --pending-color: #10a37f;
+    --preview-bg: #1f2727;
+    --unmatched-bg: #5a1e1e;
+    --unmatched-text: #f56565;
+
+    --reconciled-success-bg-color: #263d37;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#root {
+    flex-grow: 1;
+    display: flex;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--primary-bg);
+    gap: 1rem;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100vh;
+}
+
+.main-container {
+    display: flex;
+    flex: 1;
+    overflow: auto;
+    background-color: var(--primary-bg);
+    gap: 1rem;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.panel {
+    background-color: var(--secondary-bg);
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-card);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.pdf-viewer-panel {
+    height: 100vh;
+    border-radius: 0.75rem;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.btn,
+.bottom-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color var(--transition-speed), border-color var(--transition-speed);
+    text-decoration: none;
+    line-height: 1;
+    white-space: nowrap;
+    box-sizing: border-box;
+    border: 2px solid transparent;
+    box-shadow: none;
+    transform: none;
+    outline: none;
+    gap: 0.4rem;
+}
+
+.btn:focus-visible,
+.bottom-button:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+
+.btn-primary,
+.btn-success,
+.bottom-button.default {
+    background-color: var(--button-type1-bg);
+    color: var(--button-type1-text);
+    border-color: var(--button-type1-bg);
+}
+
+.btn-primary:hover,
+.btn-success:hover,
+.bottom-button.default:hover {
+    background-color: var(--button-type1-hover-bg);
+    border-color: var(--button-type1-hover-bg);
+}
+
+.btn-primary:active,
+.btn-success:active,
+.bottom-button.default:active {
+    background-color: var(--button-type1-hover-bg);
+    border-color: var(--button-type1-hover-bg);
+    filter: brightness(0.9);
+}
+
+.btn.outline,
+.bottom-button.outline {
+    background-color: var(--button-type2-bg);
+    color: var(--button-type2-text);
+    border: 2px solid var(--button-type2-border);
+}
+
+.btn.outline:hover,
+.bottom-button.outline:hover {
+    background-color: var(--button-type2-hover-bg);
+}
+
+.btn.outline:active,
+.bottom-button.outline:active {
+    background-color: var(--button-type2-hover-bg);
+    filter: brightness(0.9);
+}
+
+.btn:disabled,
+.bottom-button:disabled {
+    background-color: #e0e0e0;
+    color: #a0a0a0;
+    border-color: #cccccc;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+    filter: none;
+    opacity: 0.7;
+}
+
+.status-message {
+    padding: 0.75rem;
+    border-radius: 0.4rem;
+    font-weight: 500;
+    text-align: center;
+    opacity: 1;
+    transition: opacity var(--transition-speed);
+}
+
+.status-message.success {
+    background-color: var(--success-bg-light);
+    color: var(--success-color);
+    border: 1px solid var(--accent-color-light);
+}
+
+.status-message.info {
+    background-color: var(--info-bg-light);
+    color: var(--info-color);
+    border: 1px solid var(--info-color);
+}
+
+.status-message.error {
+    background-color: var(--error-bg-light);
+    color: var(--error-color);
+    border: 1px solid var(--error-color);
+}
+
+*::-webkit-scrollbar {
+    width: 8px;
+    border-radius: 10px;
+}
+
+*:-webkit-scrollbar-track {
+    background: var(--primary-bg);
+    border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: var(--text-color-light);
+}
+
+.file-status-icons {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9em;
+}
+
+.file-status-icon {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.success-icon {
+    color: var(--success-color);
+}
+
+.error-icon {
+    color: var(--error-color);
+}
+
+.renaming-icon,
+.pending-icon {
+    color: var(--info-color);
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.5;
+    }
+}
+
+.placeholder-item,
+.no-files-message {
+    text-align: center;
+    color: var(--text-color-light);
+    padding: 1rem;
+    font-style: italic;
+    border: 1px dashed var(--border-color);
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+}
+
+.placeholder-message {
+    padding: 2rem;
+    margin: 1rem;
+    background-color: var(--secondary-bg);
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-subtle);
+}
+
+/* *** Стили для модального окна *** */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: var(--secondary-bg);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.modal-select-company-content {
+    /* background-color: var(--secondary-bg); Removed as handled by .modal-content */
+    padding: 2.5rem;
+    /* border-radius: 1rem; Removed as handled by .modal-content */
+    /* box-shadow: var(--shadow-card); Removed as handled by .modal-content */
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.modal-select-company-title {
+    margin: 0 0 1rem 0;
+    color: var(--text-color);
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.company-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+}
+
+.company-button {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+}
+
+.input-error {
+    background-color: var(--error-bg-light) !important;
+}
+
+/* Header */
+.app-header {
+    background-color: var(--secondary-bg);
+    color: var(--text-color);
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7rem 2rem;
+    box-shadow: var(--shadow-card);
+}
+
+.left-section {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 0 0 30%;
+}
+
+.left-section h1 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.center-section {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.right-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 30%;
+    justify-content: flex-end;
+}
+
+.current-folder-path {
+    font-size: 0.85rem;
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.center-section .btn {
+    flex: 1;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.center-section .btn.active {
+    border: 2px solid var(--accent-color);
+}
+
+/* Настройки */
+.modal-content.settings-modal {
+    /* background-color: var(--secondary-bg); Removed as handled by .modal-content */
+    padding: 1.5rem;
+    /* border-radius: 1rem; Removed as handled by .modal-content */
+    /* box-shadow: var(--shadow-card); Removed as handled by .modal-content */
+    width: 700px;
+    max-width: 90%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow-y: unset;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+    margin: 0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.modal-body {
+    overflow-y: auto;
+    flex-grow: 1;
+    padding-right: 0.5rem;
+}
+
+.settings-group {
+    margin-bottom: 1.5rem;
+}
+
+.settings-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.input-field {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    box-sizing: border-box;
+}
+
+.group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.btn-small {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+.companies-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.company-item {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.company-item input {
+    flex: 1;
+    padding: 0.6rem;
+    border-radius: 0.4rem;
+    border: 1px solid var(--border-color);
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.btn-icon {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.settings-btn {
+    font-size: 1.2rem;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+}
+
+.settings-btn:hover {
+    background-color: var(--button-type2-hover-bg);
+}
+
+/* Стили вкладок в настройках */
+.settings-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.25rem;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    color: var(--text-color-light);
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.95rem;
+    border-radius: 0.5rem 0.5rem 0 0;
+    transition: all var(--transition-speed);
+    position: relative;
+}
+
+.tab-btn:hover {
+    color: var(--text-color);
+    background-color: var(--primary-bg);
+}
+
+.tab-btn.active {
+    color: var(--accent-color);
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -0.25rem;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: var(--accent-color);
+    border-radius: 3px 3px 0 0;
+}
+
+.tab-content {
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.help-text {
+    display: block;
+    margin-top: 0.4rem;
+    color: var(--text-color-light);
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+/* Стили для редактора тегов */
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    background-color: var(--primary-bg);
+    border-radius: 0.5rem;
+    min-height: 42px;
+}
+
+.tag-item {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--accent-color);
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    gap: 0.4rem;
+}
+
+.tag-remove {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.2);
+    transition: background-color 0.2s;
+}
+
+.tag-remove:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.tag-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    color: var(--text-color);
+    font-size: 0.85rem;
+    flex: 1;
+    min-width: 80px;
+    padding: 0;
+}
+
+.tag-input::placeholder {
+    color: var(--text-color-light);
+    opacity: 0.7;
+}
+
+/* Стили для новых элементов настроек */
+.path-selection {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.path-display {
+    flex: 1;
+    padding: 0.6rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    font-size: 0.8rem;
+    line-height: 0.9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.company-card {
+    background-color: var(--primary-bg);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+}
+
+.company-field {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.25rem;
+    flex: 1;
+}
+
+.company-field span {
+    font-size: 0.8rem;
+    color: var(--text-color-light);
+    font-weight: 500;
+}
+
+.company-field input {
+    font-size: 0.8rem;
+    padding: 0.6rem;
+    border-radius: 0.4rem;
+    border: 1px solid var(--border-color);
+    background-color: var(--secondary-bg);
+    color: var(--text-color);
+    line-height: 0.9rem;
+}
+
+.company-field-buttons {
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 0.5rem;
+    flex: 0;
+}
+
+.btn-remove {
+    align-self: flex-end;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+}
+
+.btn.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    filter: grayscale(1);
+}
+
+/* Справочник контрагентов */
+.modal-content.counterparties-modal {
+    width: 800px;
+    height: 90vh;
+    max-width: 95%;
+    padding: 1.5rem;
+    /* Removed overflow-y: unset as per suggestion, modal-body now handles overflow */
+}
+
+/* Специфичное поведение для тела модалки контрагентов */
+.counterparties-modal .modal-body {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Отключаем общий скролл, так как он есть у списка внутри */
+}
+
+.cp-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: var(--primary-bg);
+    border-radius: 0.5rem;
+}
+
+.cp-add-section {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.cp-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.cp-search {
+    position: relative;
+    flex: 1;
+}
+
+.cp-search i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-color-light);
+}
+
+.cp-search input {
+    width: 100%;
+    padding: 0.6rem 0.6rem 0.6rem 2rem;
+    border-radius: 0.4rem;
+    border: 1px solid var(--border-color);
+    background-color: var(--secondary-bg);
+    color: var(--text-color);
+    box-sizing: border-box;
+}
+
+.cp-list-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+}
+
+.cp-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.cp-table th {
+    position: sticky;
+    top: 0;
+    background-color: var(--primary-bg);
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 2px solid var(--border-color);
+    z-index: 1;
+}
+
+.cp-table td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.cp-table tr:hover {
+    background-color: var(--primary-bg);
+}
+
+.no-results {
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-color-light);
+}
+

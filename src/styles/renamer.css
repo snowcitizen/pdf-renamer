@@ -1,0 +1,284 @@
+/* PDF Viewer Header */
+.pdf-viewer-header { 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.pdf-viewer-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+    flex-shrink: 0;
+}
+
+.pdf-viewer-iframe {
+    flex-grow: 1;
+    width: 100%;
+    border: 0;
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow-subtle);
+    background-color: var(--secondary-bg);
+    height: 100%;
+}
+
+.renamer-controls { /* Changed from .controls */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    order: 3;
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+}
+
+.renamer-current-folder-path { /* Changed from .current-folder-path */
+    margin-right: 0.5rem;
+    font-size: 0.8em;
+    color: var(--text-color-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.left-panel {
+    flex: 2;
+    min-width: 400px;
+}
+
+.right-panel {
+    flex: 1;
+    min-width: 300px;
+}
+
+.file-list-container {
+    min-height: 0;
+    background-color: var(--secondary-bg);
+    box-shadow: var(--shadow-subtle);
+    padding: 0;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.file-list-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.file-list-container h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.file-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.file-list li {
+    padding: 0.4rem 0.6rem;
+    margin-bottom: 0.3rem;
+    background-color: var(--primary-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.4rem;
+    cursor: pointer;
+    transition: background-color var(--transition-speed);
+    font-size: 0.9em;
+    word-break: break-all;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.file-list li:hover {
+    background-color: var(--accent-color-light);
+}
+
+.file-list li.selected {
+    background-color: var(--accent-color);
+    color: #ffffff;
+    border-color: var(--accent-color);
+    font-weight: 500;
+}
+
+.file-list li.placeholder-item {
+    font-style: italic;
+    color: var(--text-color-light);
+    text-align: center;
+    padding: 1rem;
+    cursor: default;
+    background-color: var(--border-color);
+}
+
+.file-list li.placeholder-item:hover {
+    background-color: var(--border-color);
+    transform: none;
+}
+
+.file-name-text {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-status-icons {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.file-status-icon {
+    margin-left: 0.5rem;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.success-icon {
+    color: var(--success-color);
+}
+
+.error-icon {
+    color: var(--error-color);
+}
+
+.renaming-icon {
+    color: var(--info-color);
+    animation: pulse 1s infinite ease-in-out;
+}
+
+.pending-icon {
+    color: var(--pending-color);
+}
+
+@keyframes pulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
+
+.renamer-section {
+    background-color: var(--secondary-bg);
+    border-top: 1px solid var(--border-color);
+    box-shadow: var(--shadow-subtle);
+    padding: 1rem 1rem 0;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.75rem;
+}
+
+.renamer-section h3 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
+}
+
+.form-group {
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.form-group label {
+    margin-bottom: 0;
+    font-weight: 500;
+    color: var(--text-color);
+    text-align: right;
+    white-space: nowrap;
+    width: 35%;
+    flex-shrink: 0;
+}
+
+.input-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-control {
+    flex: 1;
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--button-type2-border);
+    border-radius: 0.375rem;
+    font-size: 0.9em;
+    box-sizing: border-box;
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+    color: var(--text-color);
+    background-color: var(--primary-bg);
+}
+
+.form-control:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(56, 178, 172, 0.2);
+    outline: none;
+    background-color: var(--secondary-bg);
+}
+
+.form-control[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(30%) sepia(90%) saturate(1000%) hue-rotate(150deg) brightness(90%);
+    cursor: pointer;
+}
+
+.preview-group {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    background-color: var(--preview-bg);
+    border: 1px solid var(--accent-color-light);
+    border-radius: 0.4rem;
+}
+
+.preview-group label {
+    font-weight: 600;
+    color: var(--accent-color);
+    margin-bottom: 0.4rem;
+    display: block;
+}
+
+.new-file-name-preview {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1em;
+    color: var(--text-color);
+    word-break: break-all;
+}
+
+.rename-button-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.pdf-viewer-header .renamer-controls { /* Changed from .controls */
+    width: auto;
+    justify-content: flex-end;
+    margin-top: 0;
+}
+
