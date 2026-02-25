@@ -188,7 +188,7 @@ app.whenReady().then(() => {
     createWindow();
 
     // Проверка обновлений при старте
-    checkUpdates();
+    //checkUpdates();
 
     // Регистрация открытия dev tools по клавише F10
     globalShortcut.register('F10', () => {
