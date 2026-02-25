@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*' # Сборка будет запускаться только когда ты создаешь тег версии (например, v0.9.0)
 
+permissions:
+  contents: write
+
 jobs:
   release:
     runs-on: windows-latest
