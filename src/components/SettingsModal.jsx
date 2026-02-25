@@ -58,8 +58,35 @@ const SettingsModal = ({ isOpen, onClose, onSettingsSaved }) => {
         docTypes: [],
         legalForms: []
     });
-    const [isCounterpartiesOpen, setIsCounterpartiesOpen] = useState(false);
+        const [isCounterpartiesOpen, setIsCounterpartiesOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('general');
+    const [appVersion, setAppVersion] = useState('');
+    const [updateStatus, setUpdateStatus] = useState({ status: 'idle' });
+
+    useEffect(() => {
+        if (isOpen) {
+            window.electronAPI.getAppVersion().then(setAppVersion);
+        }
+    }, [isOpen]);
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const cleanup = window.electronAPI.on('updater:status', (data) => {
+            setUpdateStatus(data);
+        });
+
+        return cleanup;
+    }, [isOpen]);
+
+    const handleCheckUpdates = () => {
+        setUpdateStatus({ status: 'checking' });
+        window.electronAPI.checkForUpdates();
+    };
+
+    const handleInstallUpdate = () => {
+        window.electronAPI.quitAndInstall();
+    };
 
     useEffect(() => {
         if (isOpen && globalSettings) {
@@ -162,11 +189,17 @@ const SettingsModal = ({ isOpen, onClose, onSettingsSaved }) => {
                     >
                         Основные
                     </button>
-                    <button
+                                        <button
                         className={`tab-btn ${activeTab === 'renamer' ? 'active' : ''}`}
                         onClick={() => setActiveTab('renamer')}
                     >
                         Переименование
+                    </button>
+                    <button
+                        className={`tab-btn ${activeTab === 'updates' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('updates')}
+                    >
+                        Обновления
                     </button>
                 </div>
 
@@ -260,7 +293,7 @@ const SettingsModal = ({ isOpen, onClose, onSettingsSaved }) => {
                                 <small className="help-text">Эти типы будут доступны в выпадающем списке при переименовании.</small>
                             </div>
 
-                            <div className="settings-group">
+                                                        <div className="settings-group">
                                 <label>Формы собственности:</label>
                                 <TagEditor
                                     tags={settings.legalForms}
@@ -268,6 +301,59 @@ const SettingsModal = ({ isOpen, onClose, onSettingsSaved }) => {
                                     placeholder="Напр: ооо (нажмите Enter для добавления)"
                                 />
                                 <small className="help-text">Используются для очистки имен контрагентов при автоматическом распознавании.</small>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'updates' && (
+                        <div className="tab-content">
+                            <div className="update-info">
+                                <div className="info-row">
+                                    <span className="info-label">Текущая версия:</span>
+                                    <span className="info-value">{appVersion}</span>
+                                </div>
+                                
+                                <div className="update-status-box">
+                                    {updateStatus.status === 'idle' && (
+                                        <p>Проверьте наличие новой версии программы.</p>
+                                    )}
+                                    {updateStatus.status === 'checking' && (
+                                        <p><i className="fa-solid fa-spinner fa-spin"></i> Проверка обновлений...</p>
+                                    )}
+                                    {updateStatus.status === 'available' && (
+                                        <div className="status-msg success">
+                                            <p><i className="fa-solid fa-circle-info"></i> Доступна новая версия: <strong>{updateStatus.info?.version}</strong></p>
+                                            <p className="small">Загрузка началась автоматически...</p>
+                                        </div>
+                                    )}
+                                    {updateStatus.status === 'not-available' && (
+                                        <div className="status-msg">
+                                            <p><i className="fa-solid fa-circle-check"></i> У вас установлена актуальная версия.</p>
+                                        </div>
+                                    )}
+                                    {updateStatus.status === 'downloaded' && (
+                                        <div className="status-msg success">
+                                            <p><i className="fa-solid fa-circle-check"></i> Версия <strong>{updateStatus.info?.version}</strong> готова к установке.</p>
+                                            <button className="btn btn-primary" onClick={handleInstallUpdate}>
+                                                Перезагрузить и обновить
+                                            </button>
+                                        </div>
+                                    )}
+                                    {updateStatus.status === 'error' && (
+                                        <div className="status-msg error">
+                                            <p><i className="fa-solid fa-circle-exclamation"></i> Ошибка при проверке обновлений:</p>
+                                            <p className="small">{updateStatus.message}</p>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <button 
+                                    className="btn btn-secondary" 
+                                    onClick={handleCheckUpdates}
+                                    disabled={updateStatus.status === 'checking'}
+                                >
+                                    <i className="fa-solid fa-rotate"></i> Проверить сейчас
+                                </button>
                             </div>
                         </div>
                     )}

@@ -850,9 +850,68 @@ body {
     background-color: var(--primary-bg);
 }
 
-.no-results {
-    padding: 2rem;
-    text-align: center;
+/* Обновления */
+.update-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+.info-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.info-label {
+    font-weight: 600;
     color: var(--text-color-light);
+}
+
+.info-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent-color);
+}
+
+.update-status-box {
+    background-color: var(--primary-bg);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.status-msg {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.status-msg p {
+    margin: 0;
+}
+
+.status-msg.success {
+    color: var(--success-color);
+}
+
+.status-msg.error {
+    color: var(--error-color);
+}
+
+.status-msg .small {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.update-status-box .btn {
+    margin-top: 0.5rem;
 }
 

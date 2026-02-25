@@ -16,46 +16,62 @@ let mainWindow;
 
 const isDev = process.env.NODE_ENV === 'development';
 
-// Настройка логирования (необязательно, но полезно для отладки)
-autoUpdater.logger = console;
-
-if (isDev) {
-    autoUpdater.forceDevUpdateConfig = true;
-}
-
 // Функция для проверки обновлений
-function checkUpdates() {
-    // Событие: обновление найдено и скачано
-    autoUpdater.on("update-downloaded", (info) => {
-        dialog.showMessageBox({
-            type: "info",
-            title: "Обновление готово",
-            message: `Версия ${info.version} скачана и готова к установке. Перезапустить сейчас?`,
-            buttons: ["Да", "Позже"]
-        }).then((result) => {
-            if (result.response === 0) {
-                autoUpdater.quitAndInstall(); // Закрывает прогу и ставит обновление
-            }
-        });
+function checkUpdates(manual = false) {
+    if (isDev) {
+        autoUpdater.forceDevUpdateConfig = true;
+    }
+    autoUpdater.logger = console;
+
+    autoUpdater.removeAllListeners("update-available");
+    autoUpdater.removeAllListeners("update-not-available");
+    autoUpdater.removeAllListeners("update-downloaded");
+    autoUpdater.removeAllListeners("error");
+
+    autoUpdater.on("update-available", (info) => {
+        if (mainWindow) mainWindow.webContents.send('updater:status', { status: 'available', info });
     });
 
-    // Событие: обновлений нет (для отладки)
     autoUpdater.on("update-not-available", () => {
-        dialog.showMessageBox({
-            type: "info",
-            title: "Обновлений нет",
-            message: "У вас установлена последняя версия."
-        });
+        if (mainWindow) mainWindow.webContents.send('updater:status', { status: 'not-available' });
     });
 
-    // Событие: ошибка
+    autoUpdater.on("update-downloaded", (info) => {
+        if (mainWindow) mainWindow.webContents.send('updater:status', { status: 'downloaded', info });
+        
+        if (!manual) {
+            dialog.showMessageBox({
+                type: "info",
+                title: "Обновление готово",
+                message: `Версия ${info.version} скачана и готова к установке. Перезапустить сейчас?`,
+                buttons: ["Да", "Позже"]
+            }).then((result) => {
+                if (result.response === 0) {
+                    autoUpdater.quitAndInstall();
+                }
+            });
+        }
+    });
+
     autoUpdater.on("error", (err) => {
-        console.error("Ошибка при проверке обновлений:", err);
+        if (mainWindow) mainWindow.webContents.send('updater:status', { status: 'error', message: err.message });
     });
 
-    // Проверяем обновления и уведомляем пользователя
     autoUpdater.checkForUpdatesAndNotify();
 }
+
+// IPC обработчики обновлений
+ipcMain.handle('updater:check', () => {
+    checkUpdates(true);
+});
+
+ipcMain.handle('updater:quit-and-install', () => {
+    autoUpdater.quitAndInstall();
+});
+
+ipcMain.handle('get-app-version', () => {
+    return app.getVersion();
+});
 
 // Настройки по умолчанию
 const settingsPath = path.join(app.getPath('userData'), 'config.json');
@@ -171,7 +187,7 @@ app.whenReady().then(() => {
 
     createWindow();
 
-    // Проверка обновлений при старте (временно включено и для разработки)
+    // Проверка обновлений при старте
     checkUpdates();
 
     // Регистрация открытия dev tools по клавише F10

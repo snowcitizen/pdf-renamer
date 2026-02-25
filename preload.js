@@ -33,6 +33,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     watchPath: (key, path, options) => ipcRenderer.invoke('watcher:watch', { key, path, options }),
     unwatchPath: (key) => ipcRenderer.invoke('watcher:unwatch', key),
 
+    // Обновления
+    checkForUpdates: () => ipcRenderer.invoke('updater:check'),
+    quitAndInstall: () => ipcRenderer.invoke('updater:quit-and-install'),
+    getAppVersion: () => ipcRenderer.invoke('get-app-version'),
+
     on: (channel, callback) => {
         const handle = (event, ...args) => callback(...args);
         ipcRenderer.on(channel, handle);
