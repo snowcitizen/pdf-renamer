@@ -1,6 +1,11 @@
 // main.js - Основной процесс Electron
 
 import { app, BrowserWindow, ipcMain, dialog, protocol, net, globalShortcut, session, nativeTheme, screen } from 'electron';
+
+//import { autoUpdater } from "electron-updater";
+import pkg from 'electron-updater';
+const { autoUpdater } = pkg;
+
 import path from 'path';
 import fs from 'fs';
 import xlsx from 'xlsx';
@@ -10,6 +15,47 @@ import watcher from './src/main/watcher.js';
 let mainWindow;
 
 const isDev = process.env.NODE_ENV === 'development';
+
+// Настройка логирования (необязательно, но полезно для отладки)
+autoUpdater.logger = console;
+
+if (isDev) {
+    autoUpdater.forceDevUpdateConfig = true;
+}
+
+// Функция для проверки обновлений
+function checkUpdates() {
+    // Событие: обновление найдено и скачано
+    autoUpdater.on("update-downloaded", (info) => {
+        dialog.showMessageBox({
+            type: "info",
+            title: "Обновление готово",
+            message: `Версия ${info.version} скачана и готова к установке. Перезапустить сейчас?`,
+            buttons: ["Да", "Позже"]
+        }).then((result) => {
+            if (result.response === 0) {
+                autoUpdater.quitAndInstall(); // Закрывает прогу и ставит обновление
+            }
+        });
+    });
+
+    // Событие: обновлений нет (для отладки)
+    autoUpdater.on("update-not-available", () => {
+        dialog.showMessageBox({
+            type: "info",
+            title: "Обновлений нет",
+            message: "У вас установлена последняя версия."
+        });
+    });
+
+    // Событие: ошибка
+    autoUpdater.on("error", (err) => {
+        console.error("Ошибка при проверке обновлений:", err);
+    });
+
+    // Проверяем обновления и уведомляем пользователя
+    autoUpdater.checkForUpdatesAndNotify();
+}
 
 // Настройки по умолчанию
 const settingsPath = path.join(app.getPath('userData'), 'config.json');
@@ -125,6 +171,9 @@ app.whenReady().then(() => {
 
     createWindow();
 
+    // Проверка обновлений при старте (временно включено и для разработки)
+    checkUpdates();
+
     // Регистрация открытия dev tools по клавише F10
     globalShortcut.register('F10', () => {
         if (mainWindow.webContents.isDevToolsOpened()) {
@@ -202,7 +251,7 @@ ipcMain.handle('select-folder', async (event, startPath) => {
 ipcMain.handle('find-reconciliation-files', async (event, companyName) => {
     if (!companyName) return [];
     try {
-    const company = currentSettings.companies.find(c => c.name === companyName);
+        const company = currentSettings.companies.find(c => c.name === companyName);
         const folderName = company ? company.folder : companyName;
         const companyPath = path.join(currentSettings.baseDrive, folderName);
 
@@ -210,7 +259,7 @@ ipcMain.handle('find-reconciliation-files', async (event, companyName) => {
 
         // Получаем все папки в директории компании для поиска подходящих под шаблоны
         const topLevelEntries = await fs.promises.readdir(companyPath, { withFileTypes: true });
-    const results = [];
+        const results = [];
 
         const scan = async (dir, baseDir, type) => {
             const entries = await fs.promises.readdir(dir, { withFileTypes: true });
@@ -226,7 +275,7 @@ ipcMain.handle('find-reconciliation-files', async (event, companyName) => {
                         // Убираем первую папку (Поступления/Реализации) и само имя файла
                         const pathParts = relativePath.split(path.sep);
                         let label = "";
-                        
+
                         if (pathParts.length > 2) {
                             // Если есть подпапки (напр. "ПОСТУПЛЕНИЯ/2023/Декабрь/файл.xlsx")
                             // Берем всё между первой папкой и файлом
@@ -353,8 +402,8 @@ ipcMain.handle('get-counterparties', async () => {
 
         // Если файла нет в userData, создаем пустой список
         if (!fs.existsSync(filePath)) {
-                fs.writeFileSync(filePath, JSON.stringify([], null, 2));
-            }
+            fs.writeFileSync(filePath, JSON.stringify([], null, 2));
+        }
         const data = fs.readFileSync(filePath, 'utf8');
         return JSON.parse(data);
     } catch (error) {
