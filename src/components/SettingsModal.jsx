@@ -359,10 +359,12 @@ const SettingsModal = ({ isOpen, onClose, onSettingsSaved }) => {
                     )}
                 </div>
 
-                <div className="modal-footer">
-                    <button className="btn btn-secondary" onClick={onClose}>Отмена</button>
-                    <button className="btn btn-primary" onClick={handleSave}>Сохранить</button>
-                </div>
+                                {activeTab !== 'updates' && (
+                    <div className="modal-footer">
+                        <button className="btn btn-secondary" onClick={onClose}>Отмена</button>
+                        <button className="btn btn-primary" onClick={handleSave}>Сохранить</button>
+                    </div>
+                )}
             </div>
 
             <CounterpartiesModal

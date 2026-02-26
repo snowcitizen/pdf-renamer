@@ -1,6 +1,6 @@
 // main.js - Основной процесс Electron
 
-import { app, BrowserWindow, ipcMain, dialog, protocol, net, globalShortcut, session, nativeTheme, screen } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, protocol, net, globalShortcut, session, nativeTheme, screen, shell } from 'electron';
 
 //import { autoUpdater } from "electron-updater";
 import pkg from 'electron-updater';
@@ -38,19 +38,6 @@ function checkUpdates(manual = false) {
 
     autoUpdater.on("update-downloaded", (info) => {
         if (mainWindow) mainWindow.webContents.send('updater:status', { status: 'downloaded', info });
-        
-        if (!manual) {
-            dialog.showMessageBox({
-                type: "info",
-                title: "Обновление готово",
-                message: `Версия ${info.version} скачана и готова к установке. Перезапустить сейчас?`,
-                buttons: ["Да", "Позже"]
-            }).then((result) => {
-                if (result.response === 0) {
-                    autoUpdater.quitAndInstall();
-                }
-            });
-        }
     });
 
     autoUpdater.on("error", (err) => {
@@ -187,9 +174,6 @@ app.whenReady().then(() => {
 
     createWindow();
 
-    // Проверка обновлений при старте
-    //checkUpdates();
-
     // Регистрация открытия dev tools по клавише F10
     globalShortcut.register('F10', () => {
         if (mainWindow.webContents.isDevToolsOpened()) {
@@ -239,6 +223,12 @@ ipcMain.handle('watcher:unwatch', (event, key) => {
     watcher.unwatch(key);
 });
 
+ipcMain.handle('open-path', async (event, path) => {
+    if (path) {
+        shell.openPath(path);
+    }
+});
+
 // Обработчики настроек
 ipcMain.handle('get-settings', () => currentSettings);
 ipcMain.handle('save-settings', (event, newSettings) => {
@@ -285,7 +275,8 @@ ipcMain.handle('find-reconciliation-files', async (event, companyName) => {
                     await scan(fullPath, baseDir, type);
                 } else if (entry.isFile()) {
                     const ext = path.extname(entry.name).toLowerCase();
-                    if (ext === '.xlsx' || ext === '.xls') {
+                    // Игнорируем временные файлы Excel (начинающиеся на ~$)
+                    if ((ext === '.xlsx' || ext === '.xls') && !entry.name.startsWith('~$')) {
                         const stats = await fs.promises.stat(fullPath);
                         const relativePath = path.relative(baseDir, fullPath);
                         // Убираем первую папку (Поступления/Реализации) и само имя файла

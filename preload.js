@@ -32,6 +32,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     // Watcher
     watchPath: (key, path, options) => ipcRenderer.invoke('watcher:watch', { key, path, options }),
     unwatchPath: (key) => ipcRenderer.invoke('watcher:unwatch', key),
+    openPath: (path) => ipcRenderer.invoke('open-path', path),
 
     // Обновления
     checkForUpdates: () => ipcRenderer.invoke('updater:check'),

@@ -22,6 +22,43 @@ import { ReconciliationProvider } from './context/ReconciliationContext.jsx'; //
 import { NotificationProvider } from './context/NotificationContext.jsx';
 import ToastContainer from './components/notifications/ToastContainer.jsx';
 import NotificationSidebar from './components/notifications/NotificationSidebar.jsx';
+import { useNotifications } from './context/NotificationContext.jsx';
+
+const UpdaterHandler = () => {
+    const { addNotification } = useNotifications();
+
+    useEffect(() => {
+        // 1. Слушаем ответы от апдейтера
+        const unsub = window.electronAPI.on('updater:status', (data) => {
+            switch (data.status) {
+                case 'available':
+                    addNotification('info', `Найдено обновление ${data.info.version}. Загрузка...`, '', false);
+                    break;
+                case 'downloaded':
+                    addNotification('success', `Обновление ${data.info.version} скачано и будет установлено после перезапуска программы.`, '', false);
+                    break;
+                /*case 'not-available':
+                    addNotification('info', 'У вас установлена последняя версия программы.', '', false);
+                    break;*/
+                case 'error':
+                    addNotification('error', `Ошибка обновления: ${data.message}`, '', false);
+                    break;
+            }
+        });
+
+        // 2. Запускаем проверку через 10 секунд
+        const timer = setTimeout(() => {
+            window.electronAPI.checkForUpdates();
+        }, 10000);
+
+        return () => {
+            unsub && unsub();
+            clearTimeout(timer);
+        };
+    }, [addNotification]);
+
+    return null;
+};
 
 const App = () => {
     const [dark, setDark] = useState(false);
@@ -63,8 +100,9 @@ const App = () => {
         document.body.classList.toggle('dark', dark);
     }, [dark]);
 
-        return (
+    return (
         <NotificationProvider>
+            <UpdaterHandler />
             <SettingsProvider>
                 <FileContextProvider
                     selectedCompany={selectedCompany}

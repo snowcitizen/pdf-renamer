@@ -51,7 +51,7 @@ export const NotificationProvider = ({ children }) => {
         loadInitialLogs();
     }, []);
 
-    const addNotification = useCallback(async (type, message, context = '') => {
+    const addNotification = useCallback(async (type, message, context = '', shouldLog = true) => {
         const now = new Date();
         const id = now.getTime();
         const timestamp = formatTimestamp(now);
@@ -80,10 +80,12 @@ export const NotificationProvider = ({ children }) => {
         setActiveToasts(prev => [...prev, newNotification]);
 
         // 3. Отправляем в Main процесс для записи в файл
-        try {
-            await window.electronAPI.logMessage(type, plainMessage, context);
-        } catch (error) {
-            console.error('Failed to log message to file:', error);
+        if (shouldLog) {
+            try {
+                await window.electronAPI.logMessage(type, plainMessage, context);
+            } catch (error) {
+                console.error('Failed to log message to file:', error);
+            }
         }
 
         // 4. Автоматическое удаление тоста через 5 секунд

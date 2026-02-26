@@ -190,9 +190,17 @@ const FileExplorerView = ({
                 >
                     <i className="fa-solid fa-arrow-up"></i>
                 </button>
-                <div className="explorer-path-display" title={currentPath}>
+                                <div className="explorer-path-display" title={currentPath}>
                     {searchQuery ? `Результаты поиска: ${searchQuery}` : (displayPath || currentPath)}
                 </div>
+                <button
+                    className="btn explorer-open-folder-btn"
+                    onClick={() => currentPath && window.electronAPI.openPath(currentPath)}
+                    title="Открыть в проводнике Windows"
+                    disabled={!currentPath}
+                >
+                    <i className="fa-solid fa-folder-open"></i>
+                </button>
             </div>
             <div className="explorer-list">
                 {sortedFiles && sortedFiles.length > 0 ? (

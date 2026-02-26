@@ -446,8 +446,8 @@ body {
     /* border-radius: 1rem; Removed as handled by .modal-content */
     /* box-shadow: var(--shadow-card); Removed as handled by .modal-content */
     width: 700px;
+    height: 800px; /* Фиксированная высота */
     max-width: 90%;
-    max-height: 80vh;
     display: flex;
     flex-direction: column;
     overflow-y: unset;
