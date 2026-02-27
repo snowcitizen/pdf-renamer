@@ -21,6 +21,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     findReconciliationFiles: (companyName) => ipcRenderer.invoke('find-reconciliation-files', companyName),
 
     renameFile: (oldPath, newName) => ipcRenderer.invoke('rename-file', oldPath, newName),
+    deleteFile: (filePath) => ipcRenderer.invoke('delete-file', filePath),
     organizeFiles: (filesToMove) => ipcRenderer.invoke('organize-files', filesToMove),
 
     // Логирование

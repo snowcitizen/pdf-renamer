@@ -116,6 +116,7 @@ body {
     padding: 1rem;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
 }
 
 .pdf-viewer-panel {
@@ -343,10 +344,10 @@ body {
 }
 
 .modal-select-company-content {
-    /* background-color: var(--secondary-bg); Removed as handled by .modal-content */
+    background-color: var(--secondary-bg); 
     padding: 2.5rem;
-    /* border-radius: 1rem; Removed as handled by .modal-content */
-    /* box-shadow: var(--shadow-card); Removed as handled by .modal-content */
+    border-radius: 1rem;
+    box-shadow: var(--shadow-card);
     text-align: center;
     max-width: 500px;
     width: 90%;
@@ -446,7 +447,8 @@ body {
     /* border-radius: 1rem; Removed as handled by .modal-content */
     /* box-shadow: var(--shadow-card); Removed as handled by .modal-content */
     width: 700px;
-    height: 800px; /* Фиксированная высота */
+    height: 800px;
+    /* Фиксированная высота */
     max-width: 90%;
     display: flex;
     flex-direction: column;
@@ -617,8 +619,15 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .help-text {
@@ -771,7 +780,8 @@ body {
 .counterparties-modal .modal-body {
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Отключаем общий скролл, так как он есть у списка внутри */
+    overflow: hidden;
+    /* Отключаем общий скролл, так как он есть у списка внутри */
 }
 
 .cp-controls {
@@ -914,4 +924,3 @@ body {
 .update-status-box .btn {
     margin-top: 0.5rem;
 }
-

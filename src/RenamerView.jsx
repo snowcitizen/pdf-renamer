@@ -264,6 +264,38 @@ const RenamerView = ({
         setSelectedFile(file);
     };
 
+    const handleDeleteFile = async () => {
+        if (!selectedFile) return;
+
+        const result = await window.electronAPI.deleteFile(selectedFile.path);
+
+        if (result.success) {
+            const deletedPath = selectedFile.path;
+
+            // 1. Находим следующий файл перед тем как удалить текущий из списка
+            const currentFileIndex = currentPdfFiles.findIndex(file => file.path === deletedPath);
+            let nextFile = null;
+            if (currentFileIndex !== -1 && currentFileIndex + 1 < currentPdfFiles.length) {
+                nextFile = currentPdfFiles[currentFileIndex + 1];
+            }
+
+            // 2. Удаляем из локального списка
+            setCurrentPdfFiles(prevFiles => prevFiles.filter(f => f.path !== deletedPath));
+
+            // 3. Выбираем следующий или сбрасываем
+            if (nextFile) {
+                setSelectedFile(nextFile);
+            } else {
+                setSelectedFile(null);
+                resetFormState();
+            }
+
+            addNotification('success', <span><strong>{selectedFile.name}</strong><br></br>успешно перемещен в корзину</span>);
+        } else if (result.message !== 'Удаление отменено') {
+            addNotification('error', `Ошибка при удалении: ${result.message}`);
+        }
+    };
+
 
     // === ОБРАБОТЧИК ПЕРЕИМЕНОВАНИЯ ===
     const handleRenameFile = async () => {
@@ -421,6 +453,7 @@ const RenamerView = ({
                     setOriginalCopy={setOriginalCopy}
                     newFileNamePreview={newFileNamePreview}
                     handleRenameFile={handleRenameFile}
+                    handleDeleteFile={handleDeleteFile}
                     docDateInputRef={docDateInputRef}
                     loadedCounterparties={loadedCounterparties}
                 />

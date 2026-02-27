@@ -229,6 +229,34 @@ ipcMain.handle('open-path', async (event, path) => {
     }
 });
 
+ipcMain.handle('delete-file', async (event, filePath) => {
+    try {
+        if (!fs.existsSync(filePath)) {
+            return { success: false, message: 'Файл не найден' };
+        }
+
+        const fileName = path.basename(filePath);
+        const result = await dialog.showMessageBox(mainWindow, {
+            type: 'question',
+            buttons: ['Удалить', 'Отмена'],
+            defaultId: 1,
+            title: 'Подтверждение удаления',
+            message: `Вы уверены, что хотите переместить файл "${fileName}" в корзину?`,
+            cancelId: 1
+        });
+
+        if (result.response === 0) {
+            await shell.trashItem(filePath);
+            return { success: true };
+        } else {
+            return { success: false, message: 'Удаление отменено' };
+        }
+    } catch (error) {
+        console.error("Ошибка при удалении файла:", error);
+        return { success: false, message: error.message };
+    }
+});
+
 // Обработчики настроек
 ipcMain.handle('get-settings', () => currentSettings);
 ipcMain.handle('save-settings', (event, newSettings) => {
