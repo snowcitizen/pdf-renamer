@@ -19,7 +19,7 @@ const isDev = process.env.NODE_ENV === 'development';
 // Функция для проверки обновлений
 function checkUpdates(manual = false) {
     if (isDev) {
-        autoUpdater.forceDevUpdateConfig = true;
+        //autoUpdater.forceDevUpdateConfig = true;
     }
     autoUpdater.logger = console;
 

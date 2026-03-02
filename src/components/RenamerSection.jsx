@@ -16,7 +16,7 @@ const RenamerSection = ({
     originalCopy,
     setOriginalCopy,
     newFileNamePreview,
-        handleRenameFile,
+            handleRenameFile,
     handleDeleteFile,
     docDateInputRef,
     loadedCounterparties
@@ -25,17 +25,6 @@ const RenamerSection = ({
 
     return (
         <div className="renamer-section">
-            <div className="section-header">
-                <h3>Переименование файла</h3>
-                <button
-                    className="btn btn-danger btn-sm"
-                    onClick={handleDeleteFile}
-                    disabled={!selectedFile}
-                    title="Удалить выбранный файл"
-                >
-                    Удалить
-                </button>
-            </div>
             <div className="form-group">
                 <label htmlFor="doc-date">Дата документа:</label>
                 <div className="input-wrapper">
@@ -113,13 +102,6 @@ const RenamerSection = ({
                 </div>
             </div>
 
-            <div className="preview-group">
-                <label>Предварительный просмотр:</label>
-                <span className="new-file-name-preview">
-                    {newFileNamePreview}
-                </span>
-            </div>
-
             <div className="rename-button-wrapper">
                 <button
                     onClick={handleRenameFile}
@@ -136,6 +118,22 @@ const RenamerSection = ({
                 >
                     Переименовать
                 </button>
+                <button
+                    className="btn btn-danger"
+                    onClick={handleDeleteFile}
+                    disabled={!selectedFile}
+                    tabIndex="-1"
+                    title="Удалить выбранный файл"
+                >
+                    Удалить
+                </button>
+            </div>
+
+            <div className="preview-group">
+                <label>Предварительный просмотр:</label>
+                <span className="new-file-name-preview">
+                    {newFileNamePreview}
+                </span>
             </div>
         </div>
     );

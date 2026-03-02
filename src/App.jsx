@@ -20,8 +20,10 @@ import { FileContextProvider } from './context/FileContext.jsx';
 import { ArchiveContextProvider } from './context/ArchiveContext.jsx';
 import { ReconciliationProvider } from './context/ReconciliationContext.jsx'; // Added import for ReconciliationProvider
 import { NotificationProvider } from './context/NotificationContext.jsx';
+import { RenamerProvider } from './context/RenamerContext.jsx';
 import ToastContainer from './components/notifications/ToastContainer.jsx';
 import NotificationSidebar from './components/notifications/NotificationSidebar.jsx';
+import RenamerSidebarOverlay from './components/RenamerSidebarOverlay.jsx';
 import { useNotifications } from './context/NotificationContext.jsx';
 
 const UpdaterHandler = () => {
@@ -100,91 +102,92 @@ const App = () => {
         document.body.classList.toggle('dark', dark);
     }, [dark]);
 
-    return (
+        return (
         <NotificationProvider>
-            <UpdaterHandler />
-            <SettingsProvider>
-                <FileContextProvider
-                    selectedCompany={selectedCompany}
-                    isRenaming={isRenaming}
-                    isOrganizing={isOrganizing}
-                >
-                    <ArchiveContextProvider selectedCompany={selectedCompany}>
-                        <ReconciliationProvider>
-                            <Router>
-                                <ToastContainer />
-                                <div className="container">
-                                    <Header
-                                        selectedCompany={selectedCompany}
-                                        //currentFolder={currentFolder}
+            <RenamerProvider>
+                <UpdaterHandler />
+                <SettingsProvider>
+                    <FileContextProvider
+                        selectedCompany={selectedCompany}
+                        isRenaming={isRenaming}
+                        isOrganizing={isOrganizing}
+                    >
+                        <ArchiveContextProvider selectedCompany={selectedCompany}>
+                            <ReconciliationProvider>
+                                <Router>
+                                    <ToastContainer />
+                                    <div className="container">
+                                        <Header
+                                            selectedCompany={selectedCompany}
+                                            //currentFolder={currentFolder}
 
-                                        onOpenCompanyModal={() => setIsCompanyModalOpen(true)}
-                                        onOpenSettings={() => setIsSettingsOpen(true)} // Added prop for SettingsModal
-                                    />
-
-                                    <div className="main-container">
-                                        <CompanySelectionModal
-                                            isOpen={isCompanyModalOpen}
-                                            onClose={() => setIsCompanyModalOpen(false)}
-                                            onSelectCompany={handleCompanySelected}
+                                            onOpenCompanyModal={() => setIsCompanyModalOpen(true)}
+                                            onOpenSettings={() => setIsSettingsOpen(true)} // Added prop for SettingsModal
                                         />
 
-                                        {/* Added SettingsModal */}
-                                        <SettingsModal
-                                            isOpen={isSettingsOpen}
-                                            onClose={() => setIsSettingsOpen(false)}
-                                            onSettingsSaved={() => {
-                                                // Обновление теперь через контекст, reload не обязателен, 
-                                                // но оставим для надежности если другие части не на контексте
-                                                // window.location.reload();
-                                            }}
-                                        />
-                                        <Routes>
-                                            <Route path="/" element={<Navigate to="/archive" replace />} />
-                                            <Route
-                                                path="/archive"
-                                                element={<ArchiveView
-                                                    selectedCompany={selectedCompany}
-                                                />} />
-                                            <Route
-                                                path="/renamer"
-                                                element={
-                                                    <RenamerView
+                                        <div className="main-container">
+                                            <CompanySelectionModal
+                                                isOpen={isCompanyModalOpen}
+                                                onClose={() => setIsCompanyModalOpen(false)}
+                                                onSelectCompany={handleCompanySelected}
+                                            />
+
+                                            {/* Added SettingsModal */}
+                                            <SettingsModal
+                                                isOpen={isSettingsOpen}
+                                                onClose={() => setIsSettingsOpen(false)}
+                                                onSettingsSaved={() => {
+                                                    // Обновление теперь через контекст, reload не обязателен, 
+                                                    // но оставим для надежности если другие части не на контексте
+                                                    // window.location.reload();
+                                                }}
+                                            />
+                                            <Routes>
+                                                <Route path="/" element={<Navigate to="/archive" replace />} />
+                                                <Route
+                                                    path="/archive"
+                                                    element={<ArchiveView
                                                         selectedCompany={selectedCompany}
-                                                        setIsRenaming={setIsRenaming}
-                                                    />
-                                                }
-                                            />
-                                            <Route
-                                                path="/organizer"
-                                                element={
-                                                    <FileOrganizer
-                                                        selectedCompany={selectedCompany}
-                                                        setIsOrganizing={setIsOrganizing}
-                                                    />
-                                                }
-                                            />
-                                            <Route
-                                                path="/reconciliation"
-                                                element={<ReconciliationView selectedCompany={selectedCompany} />}
-                                            />
-                                            <Route path="*" element={<Navigate to="/archive" replace />} />
-                                        </Routes>
-                                        <NotificationSidebar />
+                                                    />} />
+                                                <Route
+                                                    path="/renamer"
+                                                    element={
+                                                        <RenamerView
+                                                            selectedCompany={selectedCompany}
+                                                            setIsRenaming={setIsRenaming}
+                                                        />
+                                                    }
+                                                />
+                                                <Route
+                                                    path="/organizer"
+                                                    element={
+                                                        <FileOrganizer
+                                                            selectedCompany={selectedCompany}
+                                                            setIsOrganizing={setIsOrganizing}
+                                                        />
+                                                    }
+                                                />
+                                                <Route
+                                                    path="/reconciliation"
+                                                    element={<ReconciliationView selectedCompany={selectedCompany} />}
+                                                />
+                                                <Route path="*" element={<Navigate to="/archive" replace />} />
+                                            </Routes>
+                                            <RenamerSidebarOverlay selectedCompany={selectedCompany} />
+                                            <NotificationSidebar />
+                                        </div>
                                     </div>
-                                </div>
-                            </Router>
-                        </ReconciliationProvider>
-                    </ArchiveContextProvider>
-                </FileContextProvider>
-            </SettingsProvider>
+                                </Router>
+                            </ReconciliationProvider>
+                        </ArchiveContextProvider>
+                    </FileContextProvider>
+                </SettingsProvider>
+            </RenamerProvider>
         </NotificationProvider>
     );
-
 };
 
 const container = document.getElementById('root');
 const root = ReactDOM.createRoot(container);
 root.render(<App />);
-
 

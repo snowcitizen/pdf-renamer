@@ -4,7 +4,8 @@ import React, { useRef, useImperativeHandle, forwardRef } from "react";
 const FileList = forwardRef(({
     selectedFile,
     currentPdfFiles,
-    handleFileSelect
+    handleFileSelect,
+    onClose // Added prop for the close button functionality
 }, ref) => {
     const listRef = useRef(null);
     useImperativeHandle(ref, () => ({
@@ -20,6 +21,14 @@ const FileList = forwardRef(({
 
     return (
         <div className="file-list-container">
+            <div className="section-header">
+                <h3>Переименование файла</h3>
+                {onClose && (
+                    <button className="btn btn-close-sidebar" onClick={onClose} title="Закрыть">
+                        <i className="fas fa-times"></i>
+                    </button>
+                )}
+            </div>
             <ul ref={listRef} className="file-list custom-scrollbar">
                 {currentPdfFiles.length === 0 ? (
                     <li className="placeholder-item">

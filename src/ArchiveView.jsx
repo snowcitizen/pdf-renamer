@@ -4,10 +4,12 @@ import './styles/reconciliation.css';
 import PdfViewer from './components/PdfViewer.jsx';
 import FileExplorerView from './components/FileExplorerView.jsx';
 import { useArchiveContext } from './context/ArchiveContext.jsx';
+import { useRenamer } from './context/RenamerContext.jsx';
 import { useNavigate } from 'react-router-dom';
 
 const ArchiveView = ({ selectedCompany }) => {
     const navigate = useNavigate();
+    const { openArchiveRenamer } = useRenamer();
     const {
         fileData,
         setFileData,
@@ -51,6 +53,27 @@ const ArchiveView = ({ selectedCompany }) => {
         navigate('/reconciliation', { state: { selectedExcelPath: excelFilePath } });
     };
 
+    const handleRenamerOpen = (file) => {
+        openArchiveRenamer(
+            { id: file.id, name: file.name, path: file.id }, 
+            (newPath, newName) => {
+                if (newPath) {
+                    // Успешное переименование
+                    updateFileNode(file.id, { id: newPath, name: newName });
+                    setSelectedFile({ path: newPath });
+                } else {
+                    // Удаление (newPath === null)
+                    // Тут можно добавить логику удаления узла из дерева, если нужно
+                    // Но пока просто сбросим выбор
+                    setSelectedFile(null);
+                    // Перезагружаем текущую папку чтобы узел исчез
+                    // (updateFileNode для удаления не предусмотрен, проще перечитать)
+                    // но для начала просто сбросим selected
+                }
+            }
+        );
+    };
+
     return (
         <>
             <div className='panel archive-left-panel left-panel'>
@@ -68,6 +91,7 @@ const ArchiveView = ({ selectedCompany }) => {
                         onOpenFile={(file) => setSelectedFile({ path: file.id })}
                         selectedFile={selectedFile}
                         onOpenReconciliationModal={handleOpenReconciliation}
+                        onRenameClick={handleRenamerOpen}
                         renamingItemId={renamingItemId}
                         setRenamingItemId={setRenamingItemId}
                         setFileData={setFileData}

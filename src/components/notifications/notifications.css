@@ -126,6 +126,7 @@ body.dark .toast-item {
 }
 
 .notification-sidebar.floating {
+    width: 25%;
     position: fixed;
     top: 5rem;
     right: 0;
@@ -137,6 +138,7 @@ body.dark .toast-item {
 }
 
 .notification-sidebar.embedded {
+    flex: 2;
     position: relative;
     width: 700px;
     border-radius: 0.75rem;

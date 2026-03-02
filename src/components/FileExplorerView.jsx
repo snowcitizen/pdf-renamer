@@ -13,6 +13,7 @@ const FileExplorerView = ({
     onOpenFile,
     selectedFile,
     onOpenReconciliationModal,
+    onRenameClick,
     renamingItemId,
     setRenamingItemId,
     setFileData,
@@ -88,13 +89,13 @@ const FileExplorerView = ({
         }
     };
 
-    const handleContextMenu = (e, item) => {
+        const handleContextMenu = (e, item) => {
         e.preventDefault();
 
         const isPDF = item.name.toLowerCase().endsWith('.pdf');
         if (item.type !== 'folder' && isPDF) {
             onOpenFile(item); // Highlight the file
-            setRenamingItemId(item.id); // Start renaming
+            onRenameClick(item); // Вызываем наш новый оверлей
         }
     };
 

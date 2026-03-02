@@ -204,6 +204,57 @@
     padding-bottom: 0;
 }
 
+.header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-close-sidebar {
+    background: none;
+    border: none;
+    color: var(--text-color-light);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.3rem;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-close-sidebar:hover {
+    background-color: var(--error-color-light);
+    color: var(--error-color);
+}
+
+.renamer-sidebar-overlay {
+    position: fixed;
+    top: 5rem;
+    right: 0;
+    bottom: 0;
+    width: 25%;
+    background-color: var(--secondary-bg);
+    box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-out;
+}
+
+.renamer-sidebar-overlay.open {
+    transform: translateX(0);
+}
+
+.renamer-sidebar-overlay .file-list-container {
+    max-height: 200px; /* Ограничиваем список в оверлее */
+}
+
+.renamer-sidebar-overlay .renamer-section {
+    border-top: none;
+    padding: 0;
+}
+
 .form-group {
     margin-bottom: 0.6rem;
     display: flex;
@@ -278,11 +329,19 @@
 .rename-button-wrapper {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     gap: 0.5rem;
     margin-top: 0.75rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     width: 100%;
+}
+
+.rename-button-wrapper .btn-success {
+    flex-grow: 1;
+}
+
+.rename-button-wrapper .btn-danger {
+    flex-shrink: 0;
 }
 
 .pdf-viewer-header .renamer-controls { /* Changed from .controls */
