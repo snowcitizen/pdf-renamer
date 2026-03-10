@@ -86,7 +86,7 @@ const Header = ({
                     {getCompanyBtnText()}
                 </button>
 
-                                {/* Added: New button for settings */}
+                {/* Added: New button for settings */}
                 <button
                     onClick={onOpenSettings}
                     className="btn btn-icon settings-btn"

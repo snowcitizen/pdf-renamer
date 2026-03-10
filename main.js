@@ -246,10 +246,23 @@ ipcMain.handle('delete-file', async (event, filePath) => {
         });
 
         if (result.response === 0) {
+            // Проверка на занятость файла перед перемещением в корзину
+            try {
+                // Попытка открыть файл для записи. Если он открыт в другой программе, 
+                // Windows выдаст ошибку EBUSY, EPERM или EACCES.
+                const fileHandle = await fs.promises.open(filePath, 'r+');
+                await fileHandle.close();
+            } catch (lockError) {
+                if (['EBUSY', 'EPERM', 'EACCES'].includes(lockError.code)) {
+                    return {
+                        success: false,
+                        message: 'Файл занят другой программой. Закройте его и попробуйте снова.'
+                    };
+                }
+            }
+
             await shell.trashItem(filePath);
             return { success: true };
-        } else {
-            return { success: false, message: 'Удаление отменено' };
         }
     } catch (error) {
         console.error("Ошибка при удалении файла:", error);

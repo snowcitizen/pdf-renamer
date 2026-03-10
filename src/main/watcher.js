@@ -20,7 +20,7 @@ class FileWatcher {
      */
     watch(key, dirPath, options = {}) {
         if (!dirPath) return;
-        
+
         // Если уже есть вотчер с таким ключом, закрываем его
         this.unwatch(key);
 
@@ -67,7 +67,7 @@ class FileWatcher {
         if (this.mainWindow) {
             const fileName = path.basename(filePath);
             const relativePath = path.dirname(filePath); // или можно передать полный путь, renderer решит
-            
+
             this.mainWindow.webContents.send('watcher:change', {
                 event,     // 'file-added', 'file-deleted', etc.
                 key,       // 'temp', 'archive', etc.

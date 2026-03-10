@@ -327,7 +327,8 @@
 
 .log-message {
     margin: 0;
-    font-weight: 400; /* Было 500 */
+    font-weight: 400;
+    /* Было 500 */
 }
 
 .log-message strong {
@@ -339,4 +340,3 @@
     font-size: 0.9em;
     color: var(--text-color-light);
 }
-

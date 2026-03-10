@@ -27,7 +27,7 @@ export const FileContextProvider = ({ children, selectedCompany, isRenaming = fa
 
     // === УТИЛИТЫ ДЛЯ ОБНОВЛЕНИЯ ФАЙЛОВ В ОДНОМ МЕСТЕ ===
     const sortFiles = (files) => {
-        return [...files].sort((a, b) => 
+        return [...files].sort((a, b) =>
             a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })
         );
     };
@@ -49,13 +49,13 @@ export const FileContextProvider = ({ children, selectedCompany, isRenaming = fa
 
     // === ЛОГИКА ЗАГРУЗКИ ФАЙЛОВ ===
     const loadFilesFromFolder = useCallback(async (folderPath) => {
-            if (!folderPath) {
-                setCurrentFolder(null);
-                setCurrentPdfFiles([]);
-                return;
-            }
+        if (!folderPath) {
+            setCurrentFolder(null);
+            setCurrentPdfFiles([]);
+            return;
+        }
 
-            setCurrentFolder(folderPath);
+        setCurrentFolder(folderPath);
         try {
             // Загрузка файлов
             const newFiles = (await window.electronAPI.getPdfFiles(folderPath))
@@ -144,7 +144,7 @@ export const FileContextProvider = ({ children, selectedCompany, isRenaming = fa
     // Инициализация при изменении компании
     useEffect(() => {
         initializeFolderAndFiles();
-        
+
         // Подписываемся на архив компании при её выборе
         const setupArchiveWatcher = async () => {
             const archivePath = await window.electronAPI.getCompanyArchivePath(selectedCompany);

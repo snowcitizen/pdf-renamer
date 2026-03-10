@@ -48,7 +48,7 @@ export const ArchiveContextProvider = ({ children, selectedCompany }) => {
     // Вспомогательные функции для работы с деревом через watcher
     const addNodeToTree = useCallback((tree, newNode, parentPath) => {
         if (!tree) return tree;
-        
+
         // Если текущий узел и есть родитель
         if (tree.id === parentPath) {
             // Проверяем, нет ли уже такого узла
@@ -72,10 +72,10 @@ export const ArchiveContextProvider = ({ children, selectedCompany }) => {
 
     const removeNodeFromTree = useCallback((tree, targetId) => {
         if (!tree || !tree.children) return tree;
-        
+
         // Проверяем, нет ли удаляемого узла среди прямых детей
         const filteredChildren = tree.children.filter(child => child.id !== targetId);
-        
+
         if (filteredChildren.length !== tree.children.length) {
             return { ...tree, children: filteredChildren };
         }
@@ -146,18 +146,18 @@ export const ArchiveContextProvider = ({ children, selectedCompany }) => {
             // Находим путь родительской папки (всё, что до последнего слэша)
             const lastSeparatorIndex = Math.max(filePath.lastIndexOf('\\'), filePath.lastIndexOf('/'));
             const parentId = filePath.substring(0, lastSeparatorIndex);
-                if (event === 'file-added' || event === 'dir-added') {
-                    const newNode = {
+            if (event === 'file-added' || event === 'dir-added') {
+                const newNode = {
                     id: filePath, // Используем полный путь как ID
                     name: fileName,
-                        type: event === 'dir-added' ? 'folder' : 'file',
-                        ...(event === 'dir-added' ? { children: [], hasChildren: true } : {})
-                    };
-                    setFileData(prev => addNodeToTree(prev, newNode, parentId));
-                } else if (event === 'file-deleted' || event === 'dir-deleted') {
+                    type: event === 'dir-added' ? 'folder' : 'file',
+                    ...(event === 'dir-added' ? { children: [], hasChildren: true } : {})
+                };
+                setFileData(prev => addNodeToTree(prev, newNode, parentId));
+            } else if (event === 'file-deleted' || event === 'dir-deleted') {
                 setFileData(prev => removeNodeFromTree(prev, filePath));
-                }
-            });
+            }
+        });
         return () => {
             unsubscribe();
         };

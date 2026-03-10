@@ -14,7 +14,8 @@
 .archive-container {
     background-color: var(--secondary-bg);
     border-radius: 0.5rem;
-    overflow: hidden; /* Изменено с overflow-y: auto */
+    overflow: hidden;
+    /* Изменено с overflow-y: auto */
     height: 100vh;
     /* Вернул полную высоту, так как контролы удалены */
 }
@@ -116,7 +117,8 @@
 .explorer-list {
     display: flex;
     flex-direction: column;
-    padding: 4px 0; /* Уменьшил отступы */
+    padding: 4px 0;
+    /* Уменьшил отступы */
     flex: 1;
     overflow-y: auto;
 }

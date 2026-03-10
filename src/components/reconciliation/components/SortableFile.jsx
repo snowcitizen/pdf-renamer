@@ -3,7 +3,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 // SortableFile - сам перетаскиваемый компонент
-const SortableFile = ({ id, content, containerId, isDraggable = true }) => {
+const SortableFile = ({ id, content, containerId, isDraggable = true, onContextMenu }) => {
     const {
         attributes,
         listeners,
@@ -32,6 +32,12 @@ const SortableFile = ({ id, content, containerId, isDraggable = true }) => {
             {...attributes}
             {...listeners}
             className="file-draggable-item"
+            onContextMenu={(e) => {
+                if (onContextMenu) {
+                    e.preventDefault();
+                    onContextMenu(e, content);
+                }
+            }}
         >
             {content}
         </div>

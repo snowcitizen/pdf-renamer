@@ -60,7 +60,7 @@ const CounterpartiesModal = ({ isOpen, onClose }) => {
     };
 
     const filteredCounterparties = useMemo(() => {
-        return counterparties.filter(c => 
+        return counterparties.filter(c =>
             c.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }, [counterparties, searchQuery]);
@@ -78,9 +78,9 @@ const CounterpartiesModal = ({ isOpen, onClose }) => {
                 <div className="modal-body">
                     <div className="cp-controls">
                         <div className="cp-add-section">
-                            <input 
-                                type="text" 
-                                className="input-field" 
+                            <input
+                                type="text"
+                                className="input-field"
                                 placeholder="Новый контрагент..."
                                 value={newCounterparty}
                                 onChange={(e) => setNewCounterparty(e.target.value)}
@@ -90,15 +90,15 @@ const CounterpartiesModal = ({ isOpen, onClose }) => {
                                 <i className="fa-solid fa-plus"></i> Добавить
                             </button>
                         </div>
-                        
+
                         <div className="cp-actions">
                             <button className="btn btn-secondary" onClick={handleImport}>
                                 <i className="fa-solid fa-file-import"></i> Импорт из TXT
                             </button>
                             <div className="cp-search">
                                 <i className="fa-solid fa-magnifying-glass"></i>
-                                <input 
-                                    type="text" 
+                                <input
+                                    type="text"
                                     placeholder="Поиск..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -123,7 +123,7 @@ const CounterpartiesModal = ({ isOpen, onClose }) => {
                                         <tr key={index}>
                                             <td>{name}</td>
                                             <td>
-                                                <button 
+                                                <button
                                                     className="btn btn-danger btn-icon btn-small"
                                                     onClick={() => handleDelete(name)}
                                                 >

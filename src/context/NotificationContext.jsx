@@ -15,8 +15,8 @@ export const NotificationProvider = ({ children }) => {
 
         const now = new Date();
         const isToday = date.getDate() === now.getDate() &&
-                        date.getMonth() === now.getMonth() &&
-                        date.getFullYear() === now.getFullYear();
+            date.getMonth() === now.getMonth() &&
+            date.getFullYear() === now.getFullYear();
 
         if (isToday) {
             return `сегодня, ${timeStr}`;
@@ -43,10 +43,10 @@ export const NotificationProvider = ({ children }) => {
                 }));
                 // Сортировка от новых к старым
                 setNotifications(history.sort((a, b) => b.fullDate - a.fullDate));
-        } catch (error) {
+            } catch (error) {
                 console.error('Failed to load initial logs:', error);
-        }
-};
+            }
+        };
 
         loadInitialLogs();
     }, []);

@@ -18,8 +18,8 @@ const getMonthName = (monthNumber) => {
  * Хук для управления логикой упорядочивания файлов в FileOrganizer.
  */
 const useOrganizerFiles = (addNotification, selectedCompany, setIsOrganizing) => {
-    
-            const {
+
+    const {
         currentFolder,
         currentPdfFiles,
         updatePdfFilesBulk,
@@ -41,7 +41,7 @@ const useOrganizerFiles = (addNotification, selectedCompany, setIsOrganizing) =>
                 });
         }
     }, [addNotification, selectedCompany]);
-    
+
     // === СОСТОЯНИЕ (СПЕЦИФИЧНОЕ ДЛЯ ORGANIZER) ===
     // Сначала определяем функцию, потом используем её в useMemo
     const getSuggestedPath = useCallback((file) => {
@@ -117,7 +117,7 @@ const useOrganizerFiles = (addNotification, selectedCompany, setIsOrganizing) =>
         try {
             const result = await window.electronAPI.organizeFiles(ipcFriendlyFiles);
 
-            let allMovedSuccessfully = true; 
+            let allMovedSuccessfully = true;
             let anyMoved = false;
 
             const resultsMap = new Map(result.results.map(res => [res.oldPath, res]));
@@ -126,7 +126,7 @@ const useOrganizerFiles = (addNotification, selectedCompany, setIsOrganizing) =>
             filesToProcess.forEach(file => {
                 const foundResult = resultsMap.get(file.path);
                 if (foundResult) {
-                                        if (foundResult.success) {
+                    if (foundResult.success) {
                         anyMoved = true;
                         addNotification('success', <span><strong>{file.name}</strong><br></br>Файл успешно перенесен</span>, file.suggestedPath);
                         filesToAnimate.push(file.path);
@@ -159,7 +159,7 @@ const useOrganizerFiles = (addNotification, selectedCompany, setIsOrganizing) =>
                     removePdfFilesByPaths(filesToAnimate);
                 }, 500);
             }
-            
+
             /*if (allMovedSuccessfully && anyMoved) {
                 addNotification('success', 'Все выбранные файлы успешно упорядочены!');
             } else if (!allMovedSuccessfully && anyMoved) {

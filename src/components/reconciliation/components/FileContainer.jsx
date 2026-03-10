@@ -4,7 +4,7 @@ import { useDroppable } from "@dnd-kit/core";
 import SortableFile from './SortableFile';
 
 // FileContainer - компонент для несопоставленных файлов
-const FileContainer = ({ files, containerId, hoveredRow }) => {
+const FileContainer = ({ files, containerId, hoveredRow, onFileContextMenu }) => {
     const { setNodeRef, isOver } = useDroppable({ id: containerId });
     const activeHighlight = isOver || String(hoveredRow) === String(containerId);
 
@@ -16,7 +16,13 @@ const FileContainer = ({ files, containerId, hoveredRow }) => {
             <div className="file-items-wrapper">
                 <SortableContext items={files.map(f => f.id)} strategy={verticalListSortingStrategy}>
                     {files.map(file => (
-                        <SortableFile key={file.id} id={file.id} content={file.content} containerId={containerId} />
+                        <SortableFile
+                            key={file.id}
+                            id={file.id}
+                            content={file.content}
+                            containerId={containerId}
+                            onContextMenu={onFileContextMenu}
+                        />
                     ))}
                 </SortableContext>
             </div>

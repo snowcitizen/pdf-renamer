@@ -8,6 +8,8 @@ import SortableFile from './components/reconciliation/components/SortableFile';
 import { DndContext, rectIntersection, DragOverlay } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useReconciliationContext } from './context/ReconciliationContext';
+import { useRenamer } from './context/RenamerContext';
+import { getPlural } from './utils/renamerUtils';
 
 const ReconciliationView = ({ selectedCompany }) => {
     const location = useLocation();
@@ -17,49 +19,34 @@ const ReconciliationView = ({ selectedCompany }) => {
         reconFiles,
         setReconFiles,
         activeTab,
-                setActiveTab
+        setActiveTab,
+        isLoadingFiles
     } = useReconciliationContext();
-    
+
     // Реф для отслеживания текущего пути открытого файла внутри useEffect
     const selectedPathRef = useRef(selectedExcelPath);
     useEffect(() => {
         selectedPathRef.current = selectedExcelPath;
     }, [selectedExcelPath]);
 
-    const [isLoadingFiles, setIsLoadingFiles] = useState(false);
-
-
-        useEffect(() => {
-        // Сбрасываем выбранный файл при любой смене компании
-        setSelectedExcelPath(null);
-
-        const loadFiles = () => {
-            if (selectedCompany) {
-                setIsLoadingFiles(true);
-                window.electronAPI.findReconciliationFiles(selectedCompany).then(files => {
-                    setReconFiles(files);
-                    setIsLoadingFiles(false);
-                    
-                    // Если мы пришли из архива с выбранным файлом
-                    if (location.state?.selectedExcelPath) {
-                        const targetFile = files.find(f => f.fullPath === location.state.selectedExcelPath);
-                        if (targetFile) {
-                            setSelectedExcelPath(targetFile.fullPath);
-                            setActiveTab(targetFile.type);
-                        }
-                        // Очищаем состояние, чтобы при повторном переходе на вкладку не открывался тот же файл
-                        window.history.replaceState({}, document.title);
-                    }
-                });
+    useEffect(() => {
+        // Если мы пришли из архива с выбранным файлом
+        if (location.state?.selectedExcelPath) {
+            const targetFile = reconFiles.find(f => f.fullPath === location.state.selectedExcelPath);
+            if (targetFile) {
+                setSelectedExcelPath(targetFile.fullPath);
+                setActiveTab(targetFile.type);
             }
-        };
+            // Очищаем состояние, чтобы при повторном переходе на вкладку не открывался тот же файл
+            window.history.replaceState({}, document.title);
+        }
+    }, [location.state, reconFiles, setSelectedExcelPath, setActiveTab]);
 
-        loadFiles();
-
-                // Подписка на изменения в файлах сверки через вотчер архива
+    useEffect(() => {
+        // Подписка на изменения в файлах сверки через вотчер архива
         const unsubscribe = window.electronAPI.on('watcher:change', ({ event, key, filePath, fileName }) => {
             if (key === 'archive' && (fileName.toLowerCase().endsWith('.xlsx') || fileName.toLowerCase().endsWith('.xls'))) {
-                
+
                 // Если был изменен или удален именно тот файл, который сейчас открыт
                 if (selectedPathRef.current === filePath && (event === 'file-deleted' || event === 'file-changed' || event === 'dir-deleted')) {
                     setSelectedExcelPath(null);
@@ -74,8 +61,9 @@ const ReconciliationView = ({ selectedCompany }) => {
 
         return () => unsubscribe();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedCompany]); 
- 
+    }, [selectedCompany, setReconFiles, setSelectedExcelPath]);
+
+
 
     // Фильтруем файлы по выбранной вкладке
     const filteredFiles = reconFiles.filter(f => f.type === activeTab);
@@ -93,8 +81,41 @@ const ReconciliationView = ({ selectedCompany }) => {
         handleRenameFiles,
         isRenaming,
         renameErrors,
-        hoveredRow
+        hoveredRow,
+        pdfDirectory
     } = useReconciliationLogic(!!selectedExcelPath, selectedExcelPath);
+
+    const { openRenamer, setRenamerFormData } = useRenamer();
+
+    const handleFileContextMenu = (e, fileName) => {
+        if (!pdfDirectory) return;
+
+        const fullPath = `${pdfDirectory}${fileName}`;
+
+        // Пытаемся найти строку в данных сверки, к которой относится этот файл
+        let foundNumber = '';
+        if (data?.reconciledPdfFiles) {
+            // Ищем строку, где в списке matchedFiles есть наш файл
+            const row = data.reconciledPdfFiles.find(r => r.matchedFiles.includes(fileName));
+            if (row) {
+                foundNumber = row.number;
+            }
+        }
+
+        openRenamer('reconciliation', {
+            name: fileName,
+            fullPath: fullPath,
+            isDirectory: false
+        });
+
+        // Если нашли номер строки, принудительно устанавливаем его в форму после открытия
+        if (foundNumber) {
+            setRenamerFormData('reconciliation', prev => ({
+                ...prev,
+                reconNumber: foundNumber
+            }));
+        }
+    };
 
     const activeItem = getActiveItem();
 
@@ -104,6 +125,7 @@ const ReconciliationView = ({ selectedCompany }) => {
     const totalUnmatchedFiles = data?.unreconciledPdfFiles?.length || 0;
     const totalCopies = data?.copyPdfFiles?.length || 0;
     const filesReadyToRename = data?.reconciledPdfFiles?.filter(row => row.status === 'ready').length || 0;
+    const filesToClean = data?.unreconciledPdfFiles?.filter(f => /^(\d{3} - )/.test(f.content)).length || 0;
 
     return (
         <div className="reconciliation-view-container">
@@ -118,11 +140,11 @@ const ReconciliationView = ({ selectedCompany }) => {
                         <div className="reconciliation-content-header">
                             <h3>Сверка: {reconFiles.find(f => f.fullPath === selectedExcelPath)?.label}</h3>
                         </div>
-                        
+
                         <div className="reconciliation-main-area">
                             {isProcessing && <div className="loading-overlay">Загрузка данных...</div>}
                             {error && <div className="error-message">Ошибка: {error}</div>}
-                            
+
                             {!isProcessing && !error && data && (
                                 <DndContext
                                     collisionDetection={rectIntersection}
@@ -132,33 +154,22 @@ const ReconciliationView = ({ selectedCompany }) => {
                                     onDragCancel={handleDragCancel}
                                 >
                                     <div className="top-lists-wrapper">
-                                        <div className="excel-list-column">
-                                            <h3>Строки Excel</h3>
-                                            <ul className="excel-rows-list">
-                                                {data.reconciledPdfFiles.map((item, index) => (
-                                                    <li key={index} className="excel-row-item">
-                                                        <div className="excel-row-content">
-                                                            <span className="row-number">{item.number}</span>
-                                                            <span className="row-filename">{item.newFileName}</span>
-                                                        </div>
-                                                    </li>
-                                                ))}
-                                            </ul>
+                                        <div className="reconciliation-list-header">
+                                            <div className="header-excel">Строка Excel</div>
+                                            <div className="header-pdf">Сопоставленные PDF</div>
                                         </div>
-                                        <div className="pdf-list-column">
-                                            <h3>Сопоставленные PDF</h3>
-                                            <ul className="matched-files-list">
-                                                {data.reconciledPdfFiles.map((item) => (
-                                                    <DroppableRow
-                                                        key={item.number}
-                                                        item={item}
-                                                        hoveredRow={hoveredRow}
-                                                    />
-                                                ))}
-                                            </ul>
-                                        </div>
+                                        <ul className="matched-files-list">
+                                            {data.reconciledPdfFiles.map((item) => (
+                                                <DroppableRow
+                                                    key={item.number}
+                                                    item={item}
+                                                    hoveredRow={hoveredRow}
+                                                    onFileContextMenu={handleFileContextMenu}
+                                                />
+                                            ))}
+                                        </ul>
                                     </div>
-                                    
+
                                     <div className="bottom-lists-wrapper">
                                         <div className="copies-section">
                                             <h3>Копии PDF</h3>
@@ -167,7 +178,14 @@ const ReconciliationView = ({ selectedCompany }) => {
                                                     <div className="file-items-wrapper">
                                                         <SortableContext items={data.copyPdfFiles.map(f => f.id)} strategy={verticalListSortingStrategy}>
                                                             {data.copyPdfFiles.map((file) => (
-                                                                <SortableFile key={file.id} id={file.id} content={file.content} containerId="copies" isDraggable={false} />
+                                                                <SortableFile
+                                                                    key={file.id}
+                                                                    id={file.id}
+                                                                    content={file.content}
+                                                                    containerId="copies"
+                                                                    isDraggable={false}
+                                                                    onContextMenu={handleFileContextMenu}
+                                                                />
                                                             ))}
                                                         </SortableContext>
                                                     </div>
@@ -181,6 +199,7 @@ const ReconciliationView = ({ selectedCompany }) => {
                                                     files={data.unreconciledPdfFiles}
                                                     containerId="unreconciled-files"
                                                     hoveredRow={hoveredRow}
+                                                    onFileContextMenu={handleFileContextMenu}
                                                 />
                                             </ul>
                                         </div>
@@ -198,7 +217,7 @@ const ReconciliationView = ({ selectedCompany }) => {
                         </div>
 
                         <div className="reconcile-footer">
-                             <div className="reconcile-errors-summary">
+                            <div className="reconcile-errors-summary">
                                 {renameErrors.length > 0 && (
                                     <div className="rename-errors">
                                         <h4>Ошибки ({renameErrors.length}):</h4>
@@ -213,23 +232,23 @@ const ReconciliationView = ({ selectedCompany }) => {
                                 )}
                             </div>
 
-                            <button 
+                            <button
                                 className="reconcile-rename-btn btn-primary btn"
                                 onClick={handleRenameFiles}
-                                disabled={isProcessing || isRenaming || filesReadyToRename === 0}
+                                disabled={isProcessing || isRenaming || (filesReadyToRename === 0 && filesToClean === 0)}
                             >
-                                {isRenaming 
-                                    ? 'Переименование...' 
-                                    : `Назначить номера (${filesReadyToRename} готовы)`
+                                {isRenaming
+                                    ? 'Обработка...'
+                                    : `Назначить номера (${filesReadyToRename})${filesToClean > 0 ? ` + Очистка (${filesToClean})` : ''}`
                                 }
                             </button>
-                            
+
                             <div className="reconcile-stats-summary">
                                 <div className="summary-item">
                                     <span>Строк Excel: {totalExcelRows}</span>
                                 </div>
-                                <div className="summary-item">
-                                    <span>Сопоставлено: {totalMatchedFiles}</span>
+                                <div className={`summary-item ${totalExcelRows - totalMatchedFiles > 0 ? 'danger' : ''}`}>
+                                    <span>Отсутствует: {totalExcelRows - totalMatchedFiles} {getPlural(totalExcelRows - totalMatchedFiles, 'файл', 'файла', 'файлов')}</span>
                                 </div>
                                 <div className="summary-item">
                                     <span>Не сопоставлено: {totalUnmatchedFiles}</span>
@@ -295,3 +314,4 @@ const ReconciliationView = ({ selectedCompany }) => {
 };
 
 export default ReconciliationView;
+

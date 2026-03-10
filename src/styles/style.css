@@ -344,7 +344,7 @@ body {
 }
 
 .modal-select-company-content {
-    background-color: var(--secondary-bg); 
+    background-color: var(--secondary-bg);
     padding: 2.5rem;
     border-radius: 1rem;
     box-shadow: var(--shadow-card);

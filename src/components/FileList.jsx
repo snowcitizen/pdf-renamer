@@ -35,10 +35,14 @@ const FileList = forwardRef(({
                         PDF-файлы не найдены в этой папке.
                     </li>
                 ) : (
-                    currentPdfFiles.map((file) => (
+                    currentPdfFiles.map((file, index) => (
                         <li
-                            key={file.path}
-                            className={`${selectedFile && selectedFile.path === file.path ? 'selected' : ''} ${file.status === 'success' ? 'file-renamed-success' : ''} ${file.status === 'error' ? 'file-renamed-error' : ''}`}
+                            key={file.path || file.fullPath || file.name || index}
+                            className={`${selectedFile && (
+                                (selectedFile.path && selectedFile.path === file.path) ||
+                                (selectedFile.fullPath && selectedFile.fullPath === file.fullPath) ||
+                                (!selectedFile.path && !selectedFile.fullPath && selectedFile.name === file.name)
+                            ) ? 'selected' : ''} ${file.status === 'success' ? 'file-renamed-success' : ''} ${file.status === 'error' ? 'file-renamed-error' : ''}`}
                             title={file.name}
                             onClick={() => handleFileSelect(file)}
                         >

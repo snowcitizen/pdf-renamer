@@ -9,6 +9,7 @@
 export const parseFileName = (fileName, docTypes = [], legalForms = [], loadedCounterparties = []) => {
     if (!fileName) {
         return {
+            reconNumber: '',
             docDate: '',
             docType: '',
             docNumber: '',
@@ -22,11 +23,19 @@ export const parseFileName = (fileName, docTypes = [], legalForms = [], loadedCo
         .trim()
         .replace(/\s+/g, " ");
 
+    let parsedReconNumber = "";
     let parsedDate = "";
     let parsedType = "";
     let parsedNumber = "";
     let parsedCounterparty = "";
     let parsedOriginalCopy = "";
+
+    // 0) Извлекаем порядковый номер сверки (например, "001 - ")
+    const reconMatch = raw.match(/^(\d{3})\s*-\s*/);
+    if (reconMatch) {
+        parsedReconNumber = reconMatch[1];
+        raw = raw.slice(reconMatch[0].length).trim().replace(/\s+/g, " ");
+    }
 
     // 1) О/К надёжнее
     let m = raw.match(/\s*-\s*([ОК])\s*$/i);
@@ -143,6 +152,7 @@ export const parseFileName = (fileName, docTypes = [], legalForms = [], loadedCo
     }
 
     return {
+        reconNumber: parsedReconNumber,
         docDate: parsedDate,
         docType: parsedType,
         docNumber: parsedNumber,
@@ -155,8 +165,8 @@ export const parseFileName = (fileName, docTypes = [], legalForms = [], loadedCo
  * Формирует новое имя файла на основе полей
  */
 export const generateNewFileName = (fields) => {
-    const { docDate, docType, docNumber, counterparty, originalCopy } = fields;
-    
+    const { reconNumber, docDate, docType, docNumber, counterparty, originalCopy } = fields;
+
     let newNameParts = [];
 
     if (docDate) {
@@ -172,19 +182,46 @@ export const generateNewFileName = (fields) => {
     if (docType) {
         newNameParts.push(docType);
     }
-    
+
     if (docNumber && docNumber.trim()) {
         newNameParts.push(`№${docNumber.trim()}`);
     }
-    
+
     if (counterparty && counterparty.trim()) {
         newNameParts.push(counterparty.trim());
     }
-    
+
     if (originalCopy) {
         newNameParts.push(`- ${originalCopy}`);
     }
 
     let newName = newNameParts.join(' ');
+
+    // Добавляем порядковый номер в начало, если он есть
+    if (reconNumber && reconNumber.trim()) {
+        const paddedNumber = reconNumber.trim().padStart(3, '0');
+        newName = `${paddedNumber} - ${newName}`;
+    }
+
     return newName ? (newName + '.pdf') : '';
 };
+
+/**
+ * Возвращает правильную форму слова (склонение) в зависимости от числа
+ */
+export const getPlural = (number, one, two, many) => {
+    let n = Math.abs(number);
+    n %= 100;
+    if (n >= 5 && n <= 20) {
+        return many;
+    }
+    n %= 10;
+    if (n === 1) {
+        return one;
+    }
+    if (n >= 2 && n <= 4) {
+        return two;
+    }
+    return many;
+};
+

@@ -89,7 +89,7 @@ const FileExplorerView = ({
         }
     };
 
-        const handleContextMenu = (e, item) => {
+    const handleContextMenu = (e, item) => {
         e.preventDefault();
 
         const isPDF = item.name.toLowerCase().endsWith('.pdf');
@@ -191,7 +191,7 @@ const FileExplorerView = ({
                 >
                     <i className="fa-solid fa-arrow-up"></i>
                 </button>
-                                <div className="explorer-path-display" title={currentPath}>
+                <div className="explorer-path-display" title={currentPath}>
                     {searchQuery ? `Результаты поиска: ${searchQuery}` : (displayPath || currentPath)}
                 </div>
                 <button

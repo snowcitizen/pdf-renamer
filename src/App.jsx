@@ -102,7 +102,7 @@ const App = () => {
         document.body.classList.toggle('dark', dark);
     }, [dark]);
 
-        return (
+    return (
         <NotificationProvider>
             <RenamerProvider>
                 <UpdaterHandler />
@@ -113,7 +113,7 @@ const App = () => {
                         isOrganizing={isOrganizing}
                     >
                         <ArchiveContextProvider selectedCompany={selectedCompany}>
-                            <ReconciliationProvider>
+                            <ReconciliationProvider selectedCompany={selectedCompany}>
                                 <Router>
                                     <ToastContainer />
                                     <div className="container">

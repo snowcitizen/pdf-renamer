@@ -24,8 +24,8 @@ const Toast = ({ notification, onRemove }) => {
 
     const handleContextMenu = (e) => {
         e.preventDefault(); // Предотвращаем появление стандартного контекстного меню
-                setIsClosing(true);
-                setTimeout(onRemove, 300);
+        setIsClosing(true);
+        setTimeout(onRemove, 300);
     };
 
     return (

@@ -5,6 +5,8 @@ import { useSettings } from '../context/SettingsContext.jsx';
 
 const RenamerSection = ({
     selectedFile,
+    reconNumber,    // Добавляем новый пропс
+    setReconNumber, // и сеттер
     docDate,
     setDocDate,
     docType,
@@ -16,7 +18,7 @@ const RenamerSection = ({
     originalCopy,
     setOriginalCopy,
     newFileNamePreview,
-            handleRenameFile,
+    handleRenameFile,
     handleDeleteFile,
     docDateInputRef,
     loadedCounterparties
@@ -25,6 +27,22 @@ const RenamerSection = ({
 
     return (
         <div className="renamer-section">
+            {/* Показываем поле только если передан сеттер (контроль видимости) */}
+            {setReconNumber && (
+                <div className="form-group recon-number-group">
+                    <label htmlFor="recon-number">№ по порядку:</label>
+                    <div className="input-wrapper">
+                        <input
+                            type="text"
+                            id="recon-number"
+                            className="form-control"
+                            value={reconNumber}
+                            onChange={(e) => setReconNumber(e.target.value)}
+                        />
+                    </div>
+                </div>
+            )}
+
             <div className="form-group">
                 <label htmlFor="doc-date">Дата документа:</label>
                 <div className="input-wrapper">

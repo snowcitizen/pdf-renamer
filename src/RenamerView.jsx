@@ -64,9 +64,9 @@ const RenamerView = ({
     // Логика парсинга имени файла (теперь использует утилиту)
     const parseFileNameAndPopulateFields = useCallback((fileName) => {
         const parsed = parseFileName(
-            fileName, 
-            settings.docTypes, 
-            settings.legalForms, 
+            fileName,
+            settings.docTypes,
+            settings.legalForms,
             loadedCounterparties
         );
 
@@ -305,7 +305,4 @@ const RenamerView = ({
 };
 
 export default RenamerView;
-
-
-
 

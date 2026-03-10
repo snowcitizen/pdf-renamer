@@ -11,52 +11,61 @@ import '../styles/renamer.css';
 
 const RenamerSidebarOverlay = ({ selectedCompany }) => {
     const {
-        isOverlayOpen,
-        overlayFile,
-        overlayFormData,
-        setOverlayFormData,
-        closeArchiveRenamer,
-        showOverlay,
-        onOverlaySuccess,
-        resetOverlaySession
+        archiveSession,
+        reconSession,
+        openRenamer,
+        closeRenamer,
+        resetRenamerSession,
+        setRenamerFormData
     } = useRenamer();
     const location = useLocation();
+
+    // Определяем текущий режим в зависимости от страницы
+    const currentMode = location.pathname === '/reconciliation' ? 'recon' : 'archive';
+    const currentSession = currentMode === 'recon' ? reconSession : archiveSession;
+    const sessionType = currentMode === 'recon' ? 'reconciliation' : 'archive';
+
     const { settings } = useSettings();
     const { addNotification } = useNotifications();
     const sidebarRef = useRef(null);
 
     // 0. Сброс при смене компании
     useEffect(() => {
-            resetOverlaySession();
-    }, [selectedCompany, resetOverlaySession]);
+        resetRenamerSession('archive');
+        resetRenamerSession('reconciliation');
+    }, [selectedCompany, resetRenamerSession]);
 
     // 0.1 Закрытие при клике вне панели
     useEffect(() => {
-        if (!isOverlayOpen) return;
+        if (!currentSession.isOpen) return;
 
         const handleClickOutside = (event) => {
+            // Игнорируем правую кнопку мыши (button 2), чтобы не закрывать панель
+            // перед открытием нового файла через контекстное меню
+            if (event.button === 2) return;
+
             if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
                 // Не закрывать при клике по шапке (используем класс .app-header из Header.jsx)
                 const isHeader = event.target.closest('.app-header');
                 if (!isHeader) {
-                    resetOverlaySession();
+                    closeRenamer(sessionType);
                 }
             }
         };
 
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [isOverlayOpen, resetOverlaySession]);
-
+    }, [currentSession.isOpen, sessionType, closeRenamer]);
     const [loadedCounterparties, setLoadedCounterparties] = useState([]);
     const [newFileNamePreview, setNewFileNamePreview] = useState('');
     const docDateInputRef = useRef(null);
 
-    // Локальные геттеры для удобства проброса в RenamerSection
-    const { docDate, docType, docNumber, counterparty, originalCopy } = overlayFormData;
+    // Локальные геттеры из ТЕКУЩЕЙ сессии
+    const { formData, file: overlayFile, isOpen: isOverlayOpen } = currentSession;
+    const { reconNumber, docDate, docType, docNumber, counterparty, originalCopy } = formData;
 
     const updateField = (name, value) => {
-        setOverlayFormData(prev => ({ ...prev, [name]: value }));
+        setRenamerFormData(sessionType, prev => ({ ...prev, [name]: value }));
     };
 
     // Загрузка контрагентов
@@ -70,49 +79,51 @@ const RenamerSidebarOverlay = ({ selectedCompany }) => {
 
     // 1. Управление видимостью при смене страниц
     useEffect(() => {
-        // Если мы ушли с архива - скрываем оверлей (но не сбрасываем данные)
-        if (location.pathname !== '/archive' && isOverlayOpen) {
-            closeArchiveRenamer();
-        }
-        // Если вернулись в архив и у нас ЕСТЬ активный файл в сессии - показываем обратно
-        else if (location.pathname === '/archive' && overlayFile && !isOverlayOpen) {
-            showOverlay();
-        }
-    }, [location.pathname, isOverlayOpen, overlayFile, closeArchiveRenamer, showOverlay]);
+        const allowedPaths = ['/archive', '/reconciliation'];
 
-    // 2. Инициализация ПРИ ПЕРВОМ открытии нового файла или когда данные пусты
+        // Если мы ушли с разрешенных страниц - скрываем оверлей (но не сбрасываем данные)
+        if (!allowedPaths.includes(location.pathname)) {
+            if (archiveSession.isOpen) closeRenamer('archive');
+            if (reconSession.isOpen) closeRenamer('reconciliation');
+        }
+    }, [location.pathname, archiveSession.isOpen, reconSession.isOpen, closeRenamer]);
+    // 2. Инициализация ПРИ ОТКРЫТИИ или СМЕНЕ файла
     useEffect(() => {
-        if (isOverlayOpen && overlayFile && !docDate && !docType) {
-            // Только если поля пустые (значит новый сеанс или сброс)
+        if (currentSession.isOpen && overlayFile && !docDate && !docType) {
+            // Парсим имя файла. Это сработает и при открытии панели,
+            // и если мы кликнули на другой файл, когда панель уже открыта.
             const parsed = parseFileName(
                 overlayFile.name,
                 settings.docTypes,
                 settings.legalForms,
                 loadedCounterparties
             );
-            setOverlayFormData(parsed);
+            setRenamerFormData(sessionType, parsed);
 
             // Фокус на дату
             setTimeout(() => {
                 if (docDateInputRef.current) docDateInputRef.current.focus();
             }, 300);
         }
-    }, [isOverlayOpen, overlayFile, settings, loadedCounterparties, docDate, docType, setOverlayFormData]);
+        // Добавляем зависимости от идентификаторов файла, чтобы эффект срабатывал при переключении
+    }, [currentSession.isOpen, overlayFile?.fullPath, overlayFile?.path, settings, loadedCounterparties, setRenamerFormData, sessionType, docDate, docType]);
 
     // 3. Обновление превью
     useEffect(() => {
-        const newName = generateNewFileName(overlayFormData);
+        const newName = generateNewFileName(formData);
         setNewFileNamePreview(newName || 'Заполните поля');
-    }, [overlayFormData]);
+    }, [formData]);
 
     const handleRename = async () => {
         if (!overlayFile || !newFileNamePreview || newFileNamePreview === 'Заполните поля') return;
 
-        const result = await window.electronAPI.renameFile(overlayFile.path, newFileNamePreview);
+        // Используем fullPath или path в зависимости от того, как объект пришел
+        const currentPath = overlayFile.fullPath || overlayFile.path;
+        const result = await window.electronAPI.renameFile(currentPath, newFileNamePreview);
         if (result.success) {
-            addNotification('success', <span><strong>{overlayFile.name}</strong><br/>переименован в<br/><strong>{newFileNamePreview}</strong></span>);
-            if (onOverlaySuccess) onOverlaySuccess(result.newPath, newFileNamePreview);
-            resetOverlaySession(); // ПОЛНЫЙ сброс после успеха
+            addNotification('success', <span><strong>{overlayFile.name}</strong><br />переименован в<br /><strong>{newFileNamePreview}</strong></span>);
+            if (currentSession.onOverlaySuccess) currentSession.onOverlaySuccess(result.newPath, newFileNamePreview);
+            resetRenamerSession(sessionType); // ПОЛНЫЙ сброс после успеха
         } else {
             addNotification('error', `Ошибка: ${result.message}`);
         }
@@ -120,26 +131,33 @@ const RenamerSidebarOverlay = ({ selectedCompany }) => {
 
     const handleDelete = async () => {
         if (!overlayFile) return;
-        const result = await window.electronAPI.deleteFile(overlayFile.path);
+        const currentPath = overlayFile.fullPath || overlayFile.path;
+        const result = await window.electronAPI.deleteFile(currentPath);
         if (result.success) {
             addNotification('success', <span>Файл <strong>{overlayFile.name}</strong> удален</span>);
-            if (onOverlaySuccess) onOverlaySuccess(null, null); // Сигнал, что файл удален
-            resetOverlaySession(); // ПОЛНЫЙ сброс после удаления
+            if (currentSession.onOverlaySuccess) currentSession.onOverlaySuccess(null, null); // Сигнал, что файл удален
+            resetRenamerSession(sessionType); // ПОЛНЫЙ сброс после удаления
+        } else {
+            addNotification('error', <span><strong>{overlayFile.name}</strong><br></br>{result.message}</span>);
         }
     };
 
-    if (!isOverlayOpen || location.pathname !== '/archive') return null;
+    const allowedPaths = ['/archive', '/reconciliation'];
+    // Убираем return null, чтобы элемент всегда был в DOM для анимации
+    const shouldShow = isOverlayOpen && allowedPaths.includes(location.pathname);
 
     return (
-        <div className={`renamer-sidebar-overlay ${isOverlayOpen ? 'open' : ''}`} ref={sidebarRef}>
+        <div className={`renamer-sidebar-overlay ${shouldShow ? 'open' : ''}`} ref={sidebarRef}>
             <FileList
                 currentPdfFiles={overlayFile ? [overlayFile] : []}
                 selectedFile={overlayFile}
-                handleFileSelect={() => {}} // В архиве выбираем только один
-                onClose={resetOverlaySession}
+                handleFileSelect={() => { }} // В архиве выбираем только один
+                onClose={() => resetRenamerSession(sessionType)}
             />
-            <RenamerSection 
+            <RenamerSection
                 selectedFile={overlayFile}
+                reconNumber={reconNumber}
+                setReconNumber={(v) => updateField('reconNumber', v)}
                 docDate={docDate}
                 setDocDate={(v) => updateField('docDate', v)}
                 docType={docType}

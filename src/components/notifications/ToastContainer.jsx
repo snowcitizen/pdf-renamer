@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNotifications } from '../../context/NotificationContext.jsx';
 import Toast from './Toast.jsx';
-import './notifications.css';
+import '../../styles/notifications.css';
 
 const ToastContainer = () => {
     const { activeToasts, removeToast } = useNotifications();
@@ -13,10 +13,10 @@ const ToastContainer = () => {
     return (
         <div className="toast-container">
             {displayToasts.map((toast) => (
-                <Toast 
-                    key={toast.id} 
-                    notification={toast} 
-                    onRemove={() => removeToast(toast.id)} 
+                <Toast
+                    key={toast.id}
+                    notification={toast}
+                    onRemove={() => removeToast(toast.id)}
                 />
             ))}
         </div>

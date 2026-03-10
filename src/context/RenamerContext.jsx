@@ -3,63 +3,88 @@ import React, { createContext, useContext, useState, useCallback } from 'react';
 
 const RenamerContext = createContext();
 
+// Добавляем состояние для хранения данных формы
+const initialFormData = {
+    reconNumber: '', // Добавляем поле для порядкового номера из сверки
+    docDate: '',
+    docType: '',
+    docNumber: '',
+    counterparty: '',
+    originalCopy: ''
+};
+
+const createInitialSession = () => ({
+    isOpen: false,
+    file: null,
+    formData: { ...initialFormData },
+    onOverlaySuccess: null
+});
+
 export const RenamerProvider = ({ children }) => {
-    // Состояние для оверлей-режима (Архив)
-    const [isOverlayOpen, setIsOverlayOpen] = useState(false);
-    const [overlayFile, setOverlayFile] = useState(null);
-    const [onOverlaySuccess, setOnOverlaySuccess] = useState(null);
+    // Две независимые сессии (Архив и Акты сверки)
+    const [archiveSession, setArchiveSession] = useState(createInitialSession());
+    const [reconSession, setReconSession] = useState(createInitialSession());
 
-    // Добавляем состояние для хранения данных формы
-    const [overlayFormData, setOverlayFormData] = useState({
-        docDate: '',
-        docType: '',
-        docNumber: '',
-        counterparty: '',
-        originalCopy: ''
-    });
-
-    const openArchiveRenamer = useCallback((file, onSuccess) => {
-        // Если открываем новый файл, сбрасываем или инициализируем форму
-        // Если тот же самый - можно оставить как есть
-        setOverlayFile(file);
-        setOnOverlaySuccess(() => onSuccess);
-        setIsOverlayOpen(true);
-    }, []);
-
-    const closeArchiveRenamer = useCallback(() => {
-        setIsOverlayOpen(false);
-        // Мы НЕ сбрасываем overlayFile и overlayFormData здесь,
-        // чтобы они сохранились при возврате на страницу
-    }, []);
-
-    const resetOverlaySession = useCallback(() => {
-        setIsOverlayOpen(false);
-        setOverlayFile(null);
-        setOverlayFormData({
-            docDate: '',
-            docType: '',
-            docNumber: '',
-            counterparty: '',
-            originalCopy: ''
+    // Универсальный метод открытия
+    const openRenamer = useCallback((type, file, onSuccess) => {
+        const updater = (prev) => ({
+            ...prev,
+            isOpen: true,
+            file: file,
+            onOverlaySuccess: onSuccess ? () => onSuccess : null,
+            // Если открываем новый файл, сбрасываем или инициализируем форму
+            formData: { ...initialFormData }
         });
-        setOnOverlaySuccess(null);
+
+        if (type === 'archive') setArchiveSession(updater);
+        else setReconSession(updater);
     }, []);
 
-    const showOverlay = useCallback(() => {
-        if (overlayFile) setIsOverlayOpen(true);
-    }, [overlayFile]);
+    // Универсальный метод закрытия (без сброса данных)
+    const closeRenamer = useCallback((type) => {
+        const updater = (prev) => ({ ...prev, isOpen: false });
+
+        // Мы НЕ сбрасываем file и formData здесь,
+        // чтобы они сохранились при возврате на страницу
+        if (type === 'archive') setArchiveSession(updater);
+        else setReconSession(updater);
+    }, []);
+
+    // Универсальный метод сброса (полная очистка)
+    const resetRenamerSession = useCallback((type) => {
+        if (type === 'archive') setArchiveSession(createInitialSession());
+        else setReconSession(createInitialSession());
+    }, []);
+
+    // Универсальный метод обновления данных формы
+    const setRenamerFormData = useCallback((type, dataOrFn) => {
+        const updater = (prev) => ({
+            ...prev,
+            formData: typeof dataOrFn === 'function' ? dataOrFn(prev.formData) : dataOrFn
+        });
+        if (type === 'archive') setArchiveSession(updater);
+        else setReconSession(updater);
+    }, []);
+
+    // Метод для быстрого открытия оверлея, если файл уже выбран
+    const showOverlay = useCallback((type) => {
+        const updater = (prev) => {
+            if (prev.file) return { ...prev, isOpen: true };
+            return prev;
+        };
+        if (type === 'archive') setArchiveSession(updater);
+        else setReconSession(updater);
+    }, []);
 
     return (
         <RenamerContext.Provider value={{
-            isOverlayOpen,
-            overlayFile,
-            overlayFormData,
-            setOverlayFormData,
-            openArchiveRenamer,
-            closeArchiveRenamer,
-            resetOverlaySession,
-            showOverlay,
-            onOverlaySuccess
+            archiveSession,
+            reconSession,
+            openRenamer,
+            closeRenamer,
+            resetRenamerSession,
+            setRenamerFormData,
+            showOverlay
         }}>
             {children}
         </RenamerContext.Provider>

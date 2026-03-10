@@ -7,11 +7,13 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    pointer-events: none; /* Пропускаем клики сквозь контейнер */
+    pointer-events: none;
+    /* Пропускаем клики сквозь контейнер */
 }
 
 .toast-item {
-    pointer-events: auto; /* Но разрешаем клики по самим тостам */
+    pointer-events: auto;
+    /* Но разрешаем клики по самим тостам */
     width: 320px;
     background: var(--secondary-bg, #ffffff);
     color: var(--text-color, #1a1a1a);
@@ -31,20 +33,45 @@
 }
 
 @keyframes toast-in {
-    from { transform: translateX(120%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+    from {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
 @keyframes toast-out {
-    from { transform: translateX(0); opacity: 1; }
-    to { transform: translateX(120%); opacity: 0; }
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(120%);
+        opacity: 0;
+    }
 }
 
 /* Цвета по типам */
-.toast-item.success { border-left-color: var(--success-color, #4caf50); }
-.toast-item.error { border-left-color: var(--error-color, #f44336); }
-.toast-item.warning { border-left-color: var(--warning-color, #ff9800); }
-.toast-item.info { border-left-color: var(--info-color, #2196f3); }
+.toast-item.success {
+    border-left-color: var(--success-color, #4caf50);
+}
+
+.toast-item.error {
+    border-left-color: var(--error-color, #f44336);
+}
+
+.toast-item.warning {
+    border-left-color: var(--warning-color, #ff9800);
+}
+
+.toast-item.info {
+    border-left-color: var(--info-color, #2196f3);
+}
 
 .toast-icon {
     margin-right: 12px;
@@ -52,10 +79,21 @@
     padding-top: 2px;
 }
 
-.toast-item.success .toast-icon { color: #4caf50; }
-.toast-item.error .toast-icon { color: #f44336; }
-.toast-item.warning .toast-icon { color: #ff9800; }
-.toast-item.info .toast-icon { color: #2196f3; }
+.toast-item.success .toast-icon {
+    color: #4caf50;
+}
+
+.toast-item.error .toast-icon {
+    color: #f44336;
+}
+
+.toast-item.warning .toast-icon {
+    color: #ff9800;
+}
+
+.toast-item.info .toast-icon {
+    color: #2196f3;
+}
 
 .toast-content {
     flex: 1;
@@ -63,7 +101,8 @@
 
 .toast-message {
     font-size: 0.8rem;
-    font-weight: 400; /* Изменено с 500 */
+    font-weight: 400;
+    /* Изменено с 500 */
     line-height: 1.4;
 }
 
@@ -104,8 +143,13 @@
 }
 
 @keyframes toast-progress {
-    from { width: 100%; }
-    to { width: 0%; }
+    from {
+        width: 100%;
+    }
+
+    to {
+        width: 0%;
+    }
 }
 
 /* Адаптация под темную тему, если переменные не определены */
@@ -147,8 +191,13 @@ body.dark .toast-item {
 }
 
 @keyframes sidebar-slide-in {
-    from { transform: translateX(100%); }
-    to { transform: translateX(0); }
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
 }
 
 .sidebar-header {
@@ -202,10 +251,21 @@ body.dark .toast-item {
     opacity: 0.6;
 }
 
-.log-entry.success::before { background-color: var(--success-color, #4caf50); }
-.log-entry.error::before { background-color: var(--error-color, #f44336); }
-.log-entry.warning::before { background-color: var(--warning-color, #ff9800); }
-.log-entry.info::before { background-color: var(--info-color, #2196f3); }
+.log-entry.success::before {
+    background-color: var(--success-color, #4caf50);
+}
+
+.log-entry.error::before {
+    background-color: var(--error-color, #f44336);
+}
+
+.log-entry.warning::before {
+    background-color: var(--warning-color, #ff9800);
+}
+
+.log-entry.info::before {
+    background-color: var(--info-color, #2196f3);
+}
 
 .log-icon {
     font-size: 1rem;
@@ -242,7 +302,8 @@ body.dark .toast-item {
     line-height: 1.4;
     word-break: break-word;
     font-weight: 400;
-    white-space: pre-wrap; /* Добавлено для отображения переносов \n */
+    white-space: pre-wrap;
+    /* Добавлено для отображения переносов \n */
 }
 
 .log-message strong {
@@ -265,10 +326,21 @@ body.dark .toast-item {
     font-style: italic;
 }
 
-.text-success { color: #4caf50; }
-.text-error { color: #f44336; }
-.text-warning { color: #ff9800; }
-.text-info { color: #2196f3; }
+.text-success {
+    color: #4caf50;
+}
+
+.text-error {
+    color: #f44336;
+}
+
+.text-warning {
+    color: #ff9800;
+}
+
+.text-info {
+    color: #2196f3;
+}
 
 .icon-btn {
     background: none;
@@ -284,4 +356,3 @@ body.dark .toast-item {
     background: rgba(255, 255, 255, 0.1);
     color: var(--text-main, #fff);
 }
-

@@ -2,10 +2,25 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const ReconciliationContext = createContext();
 
-export const ReconciliationProvider = ({ children }) => {
+export const ReconciliationProvider = ({ children, selectedCompany }) => {
     const [selectedExcelPath, setSelectedExcelPath] = useState(null);
     const [reconFiles, setReconFiles] = useState([]);
     const [activeTab, setActiveTab] = useState('income');
+    const [isLoadingFiles, setIsLoadingFiles] = useState(false);
+
+    // Сброс и загрузка при смене компании
+    useEffect(() => {
+        setSelectedExcelPath(null);
+        setReconFiles([]);
+
+        if (selectedCompany) {
+            setIsLoadingFiles(true);
+            window.electronAPI.findReconciliationFiles(selectedCompany).then(files => {
+                setReconFiles(files);
+                setIsLoadingFiles(false);
+            });
+        }
+    }, [selectedCompany]);
 
     const value = {
         selectedExcelPath,
@@ -13,7 +28,9 @@ export const ReconciliationProvider = ({ children }) => {
         reconFiles,
         setReconFiles,
         activeTab,
-        setActiveTab
+        setActiveTab,
+        isLoadingFiles,
+        setIsLoadingFiles
     };
 
     return (
@@ -30,3 +47,4 @@ export const useReconciliationContext = () => {
     }
     return context;
 };
+

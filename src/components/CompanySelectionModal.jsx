@@ -7,10 +7,10 @@ const CompanySelectionModal = ({ isOpen, onClose, onSelectCompany }) => {
         if (isOpen) {
             // Check if window.electronAPI exists before calling it - this check was removed as per suggested edit
             // but the original had a more robust check for `window.electronAPI` and `getSettings` function
-                window.electronAPI.getSettings().then(settings => {
-                    if (settings && settings.companies) {
-                        setCompanies(settings.companies.map(c => c.name));
-                    }
+            window.electronAPI.getSettings().then(settings => {
+                if (settings && settings.companies) {
+                    setCompanies(settings.companies.map(c => c.name));
+                }
             })
             // .catch block was removed as per suggested edit
             // .catch(error => {
@@ -45,20 +45,20 @@ const CompanySelectionModal = ({ isOpen, onClose, onSelectCompany }) => {
                     {companies.length > 0 ? (
                         companies.map((company, index) => (
                             <button
-                            key={index}
-                            className="btn btn-primary company-button"
-                            onClick={() => onSelectCompany(company)}
-                        >
-                            {company}
-                        </button>
+                                key={index}
+                                className="btn btn-primary company-button"
+                                onClick={() => onSelectCompany(company)}
+                            >
+                                {company}
+                            </button>
                         ))
                     ) : (
                         <p>Компании не добавлены. Перейдите в настройки.</p>
                     )}
-            </div>
+                </div>
                 {/* Кнопка закрытия закомментирована, так как выбор обязателен - This comment is no longer fully accurate as the button is now active. */}
-                <button onClick={onClose} className="btn btn-secondary close-button" style={{marginTop: '1rem'}}>Закрыть</button>
-        </div>
+                <button onClick={onClose} className="btn btn-secondary close-button" style={{ marginTop: '1rem' }}>Закрыть</button>
+            </div>
         </div>
     );
 };

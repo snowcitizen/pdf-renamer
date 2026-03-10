@@ -58,7 +58,7 @@ const SettingsModal = ({ isOpen, onClose, onSettingsSaved }) => {
         docTypes: [],
         legalForms: []
     });
-        const [isCounterpartiesOpen, setIsCounterpartiesOpen] = useState(false);
+    const [isCounterpartiesOpen, setIsCounterpartiesOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('general');
     const [appVersion, setAppVersion] = useState('');
     const [updateStatus, setUpdateStatus] = useState({ status: 'idle' });
@@ -189,7 +189,7 @@ const SettingsModal = ({ isOpen, onClose, onSettingsSaved }) => {
                     >
                         Основные
                     </button>
-                                        <button
+                    <button
                         className={`tab-btn ${activeTab === 'renamer' ? 'active' : ''}`}
                         onClick={() => setActiveTab('renamer')}
                     >
@@ -293,7 +293,7 @@ const SettingsModal = ({ isOpen, onClose, onSettingsSaved }) => {
                                 <small className="help-text">Эти типы будут доступны в выпадающем списке при переименовании.</small>
                             </div>
 
-                                                        <div className="settings-group">
+                            <div className="settings-group">
                                 <label>Формы собственности:</label>
                                 <TagEditor
                                     tags={settings.legalForms}
@@ -312,7 +312,7 @@ const SettingsModal = ({ isOpen, onClose, onSettingsSaved }) => {
                                     <span className="info-label">Текущая версия:</span>
                                     <span className="info-value">{appVersion}</span>
                                 </div>
-                                
+
                                 <div className="update-status-box">
                                     {updateStatus.status === 'idle' && (
                                         <p>Проверьте наличие новой версии программы.</p>
@@ -347,8 +347,8 @@ const SettingsModal = ({ isOpen, onClose, onSettingsSaved }) => {
                                     )}
                                 </div>
 
-                                <button 
-                                    className="btn btn-secondary" 
+                                <button
+                                    className="btn btn-secondary"
                                     onClick={handleCheckUpdates}
                                     disabled={updateStatus.status === 'checking'}
                                 >
@@ -359,7 +359,7 @@ const SettingsModal = ({ isOpen, onClose, onSettingsSaved }) => {
                     )}
                 </div>
 
-                                {activeTab !== 'updates' && (
+                {activeTab !== 'updates' && (
                     <div className="modal-footer">
                         <button className="btn btn-secondary" onClick={onClose}>Отмена</button>
                         <button className="btn btn-primary" onClick={handleSave}>Сохранить</button>

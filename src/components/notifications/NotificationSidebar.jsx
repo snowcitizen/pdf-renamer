@@ -2,7 +2,7 @@
 import React, { useRef, useEffect } from 'react';
 import { useNotifications } from '../../context/NotificationContext.jsx';
 import { useLocation } from 'react-router-dom';
-import './notifications.css';
+import '../../styles/notifications.css';
 
 const NotificationSidebar = () => {
     const { notifications, isSidebarOpen, toggleSidebar, setIsSidebarOpen } = useNotifications();
@@ -11,7 +11,7 @@ const NotificationSidebar = () => {
     const sidebarRef = useRef(null);
 
     const isOrganizerPage = location.pathname === '/organizer';
-    
+
     // Закрывать панель при смене маршрута (если это не страница органайзера)
     useEffect(() => {
         if (!isOrganizerPage) {
@@ -73,7 +73,7 @@ const NotificationSidebar = () => {
                     )}
                 </div>
             </div>
-            
+
             <div className="sidebar-content custom-scrollbar" ref={scrollRef}>
                 {notifications.length === 0 ? (
                     <div className="empty-logs">Журнал пуст</div>

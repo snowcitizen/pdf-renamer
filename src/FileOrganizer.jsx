@@ -6,11 +6,11 @@ import useOrganizerFiles from './hooks/useOrganizerFiles.jsx';
 import './styles/organizer.css';
 
 const FileOrganizer = ({
-    selectedCompany, 
-    setIsOrganizing 
+    selectedCompany,
+    setIsOrganizing
 }) => {
     const { addNotification } = useNotifications();
-    
+
     const {
         organizedFiles,
         handleFileTypeChange,
@@ -23,7 +23,7 @@ const FileOrganizer = ({
     );
     // =====================================
 
-        return (
+    return (
         <div className="organizer-view-container">
             {/* Левая основная колонка контента */}
             <div className="main-organizer-area">
